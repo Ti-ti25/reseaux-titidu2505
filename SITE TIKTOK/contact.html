@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact & Partenariats</title>
+    <style>
+        /* Styles Généraux */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212; /* Fond sombre style TikTok */
+            color: #ffffff;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Conteneur du Formulaire */
+        .contact-container {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 28px;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        p {
+            text-align: center;
+            color: #a0a0a0;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        /* Groupes de champs */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        .btn-submit:hover {
+              background-color: #e53935; /* Le fond devient rouge */
+             color: #ffffff;            /* Le texte devient blanc */
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #fe2c55; /* Rouge/Rose TikTok pour le focus */
+        }
+
+        textarea {
+            resize: vertical;
+            height: 120px;
+        }
+
+        /* Bouton d'envoi avec l'effet Rouge au survol */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: #ffffff; /* Couleur de base blanche/claire */
+            color: #121212;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Transition fluide */
+            margin-top: 10px;
+        }
+
+        /* Effet de survol (Hover) : Devient rouge */
+        .btn-submit:hover {
+            background-color: #e53935; /* Rouge vif */
+            color: #ffffff; /* Le texte passe en blanc pour rester lisible */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contact-container">
+        <h2>Contact Pro</h2>
+        <p>Une idée de partenariat, une marque ou une question ? Discutons-en !</p>
+
+        <form action="#" method="POST">
+            <div class="form-group">
+                <label for="name">Nom / Nom de l'entreprise</label>
+                <input type="text" id="name" name="name" placeholder="Ex: Jean Dupont ou TikTok France" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Adresse Email</label>
+                <input type="email" id="email" name="email" placeholder="Ex: contact@entreprise.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="subject">Objet du message</label>
+                <select id="subject" name="subject" required>
+                    <option value="" disabled selected>Choisissez une option...</option>
+                    <option value="partenariat">Partenariat / Sponsoring</option>
+                    <option value="evenement">Invitation Événement</option>
+                    <option value="pro">Autre demande professionnelle</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Votre Message</label>
+                <textarea id="message" name="message" placeholder="Décrivez votre projet en quelques lignes..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">Envoyer la demande</button>
+        </form>
+    </div>
+
+</body>
+</html>
