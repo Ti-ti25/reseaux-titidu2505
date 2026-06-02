@@ -14,7 +14,7 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 2rem 1rem; }
-        .container { max-width: 450px; width: 100%; text-align: center; }
+        .container { max-width: 450px; width: 100%; text-align: center; display: flex; flex-direction: column; min-height: 85vh; }
         .avatar-container { position: relative; width: 110px; height: 110px; margin: 0 auto 1.5rem auto; }
         .avatar { width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink)); padding: 4px; }
         .avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background-color: #000; }
@@ -51,30 +51,25 @@
         footer { margin-top: auto; padding-top: 3rem; font-size: 0.8rem; color: #3f3f46; position: relative; }
         .last-update { font-size: 0.75rem; color: #71717a; margin-top: 0.5rem; font-style: italic; }
 
-        /* LE BOUTON SECRET ULTRA DISCRET */
         .secret-admin-btn {
             display: inline-block;
             width: 6px;
             height: 6px;
-            background-color: #1c1c1e; /* Couleur très proche du fond noir pour se fondre dans le décor */
+            background-color: #1c1c1e;
             border-radius: 50%;
             text-decoration: none;
             margin-left: 5px;
             vertical-align: middle;
-            cursor: default; /* Curseur normal pour ne pas lever de soupçons au survol */
-            transition: background-color 0.3s;
+            cursor: default;
         }
-        /* Devient légèrement visible uniquement si on sait exactement où poser la souris */
-        .secret-admin-btn:hover {
-            background-color: #3a3a3c;
-        }
+        .secret-admin-btn:hover { background-color: #3a3a3c; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="avatar-container"><div class="avatar"><img src="voila.png" alt="Profil"></div></div>
-        <h1>Titidu25 🌐</h1>
-        <span class="username">@titidu25050</span>
+        <div class="avatar-container"><div class="avatar"><img src="https://via.placeholder.com/150" alt="Profil"></div></div>
+        <h1>Tristan 🌐</h1>
+        <span class="username">@ton_pseudo_tiktok</span>
 
         <div class="stats-box">
             <div class="stat-item"><span class="stat-value" id="view-followers">150</span><span class="stat-label">Suivi</span></div>
@@ -82,39 +77,58 @@
             <div class="stat-item"><span class="stat-value" id="view-domaine">150K</span><span class="stat-label">J'aime</span></div>
         </div>
 
-        <div class="links-container">
-            <a href="https://discord.com/invite/V4YMKzWYEM" target="_blank" class="tiktok-link">🚀 Rejoins mon serveur Discord !</a>
-            <a href="https://www.youtube.com/@titidu-ix7yf" target="_blank" class="tiktok-link">📺 Ma chaîne YouTube</a>
-            <a href="https://www.twitch.tv/titidu25050" target="_blank" class="tiktok-link">📸 Ma chaîne Twitch</a>
-            <a href="contact.html" class="tiktok-link">📩 Contact Pro / Partenariats</a>
-        </div>
+        <div class="links-container" id="links-wrapper"></div>
+
         <footer>
-            <!-- Le bouton secret est le petit point placé juste après le copyright -->
-            <p>&copy; 2026 - Tristan. Tous droits réservés.<a href="admin.html" class="secret-admin-btn" title=""></a></p>
+            <p>&copy; 2026 - Tristan. Tous droits réservés.<a href="admin.html" class="secret-admin-btn"></a></p>
             <p class="last-update" id="view-date">Aucune sauvegarde détectée</p>
         </footer>
     </div>
 
     <script>
+        // Boutons par défaut si la mémoire est vide au premier démarrage
+        const boutonsParDefaut = [
+            { texte: "🚀 Rejoins mon serveur Discord !", url: "https://discord.gg/tonlink" },
+            { texte: "📺 Ma chaîne YouTube", url: "https://youtube.com/" },
+            { texte: "📩 Contact Pro / Partenariats", url: "contact.html" }
+        ];
+
         function chargerDonnees() {
+            // 1. Gestion des statistiques
             if(localStorage.getItem("followers")) {
                 document.getElementById("view-followers").innerText = localStorage.getItem("followers");
                 document.getElementById("view-likes").innerText = localStorage.getItem("likes");
                 document.getElementById("view-domaine").innerText = localStorage.getItem("domaine");
-                document.getElementById("view-date").innerText = "Dernière sauvegarde : le " + localStorage.getItem("date_sauvegarde");
+                document.getElementById("view-date").innerText = "Dernière mise à jour : le " + localStorage.getItem("date_sauvegarde");
             }
+
+            // 2. Gestion et affichage dynamique des boutons
+            let boutons = localStorage.getItem("liste_boutons");
+            if (!boutons) {
+                boutons = boutonsParDefaut;
+                localStorage.setItem("liste_boutons", JSON.stringify(boutonsParDefaut));
+            } else {
+                boutons = JSON.parse(boutons);
+            }
+
+            const wrapper = document.getElementById("links-wrapper");
+            wrapper.innerHTML = ""; // On vide pour reconstruire proprement
+
+            boutons.forEach(bouton => {
+                const a = document.createElement("a");
+                a.href = bouton.url;
+                a.className = "tiktok-link";
+                // Si c'est un lien externe, on l'ouvre dans un nouvel onglet, sinon (ex: contact.html) normal
+                if(bouton.url.startsWith("http")) {
+                    a.target = "_blank";
+                }
+                a.innerText = bouton.texte;
+                wrapper.appendChild(a);
+            });
         }
 
         document.addEventListener("DOMContentLoaded", chargerDonnees);
-
-        window.addEventListener("storage", () => {
-            chargerDonnees();
-            const valeurs = document.querySelectorAll(".stat-value");
-            valeurs.forEach(el => el.style.color = "#00f2fe");
-            setTimeout(() => {
-                valeurs.forEach(el => el.style.color = "#ffffff");
-            }, 500);
-        });
+        window.addEventListener("storage", chargerDonnees);
     </script>
 </body>
 </html>
