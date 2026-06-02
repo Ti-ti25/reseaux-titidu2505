@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Titidu2505 | Communauté TikTok</title>
+    <title>Tristan | Communauté TikTok</title>
     <style>
         :root { 
             --bg-color: #010101; 
@@ -19,7 +19,46 @@
         .avatar { width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink)); padding: 4px; }
         .avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background-color: #000; }
         h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.3rem; }
-        .username { color: #a1a1aa; font-size: 1rem; margin-bottom: 1.5rem; display: block; }
+        
+        /* STYLE DU PSEUDO CLIQUABLE */
+        /* Centrage du container */
+        .username-container { margin-bottom: 1.5rem; }
+
+        /* Style ciblé UNIQUEMENT sur le @titidu25050 */
+        .username { 
+            color: #a1a1aa; 
+            font-size: 1rem; 
+            cursor: pointer; 
+            transition: all 0.2s ease;
+            position: relative;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .username:hover { 
+            color: #ffffff; 
+            background-color: #1c1c1e;
+        }
+        /* Message "Copié !" */
+        .tooltip-copy {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--tiktok-cyan);
+            color: #000000;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .tooltip-copy.show {
+            opacity: 1;
+        }
+
         .stats-box { display: flex; justify-content: space-around; background-color: var(--card-bg); border: 1px solid #27272a; border-radius: 16px; padding: 1rem; margin-bottom: 2rem; }
         .stat-item span { display: block; }
         .stat-value { font-weight: 700; font-size: 1.25rem; color: #ffffff; transition: color 0.3s ease; }
@@ -67,9 +106,16 @@
 </head>
 <body>
     <div class="container">
-        <div class="avatar-container"><div class="avatar"><img src="voila.png" alt="Profil"></div></div>
+        <div class="avatar-container"><div class="avatar"><img src="https://via.placeholder.com/150" alt="Profil"></div></div>
         <h1>Titidu2505 🌐</h1>
-        <span class="username">@titidu25050</span>
+        
+        <!-- On entoure juste le @titidu25050 avec une span pour limiter la zone -->
+        <div class="username-container">
+            <span class="username" id="copy-username" title="Cliquer pour copier">
+                @titidu25050
+                <span class="tooltip-copy" id="tooltip">Copié !</span>
+            </span>
+        </div>
 
         <div class="stats-box">
             <div class="stat-item"><span class="stat-value" id="view-followers">150</span><span class="stat-label">Suivi</span></div>
@@ -80,13 +126,12 @@
         <div class="links-container" id="links-wrapper"></div>
 
         <footer>
-            <p>&copy; 2026 - Titidu2505. Tous droits réservés.<a href="admin.html" class="secret-admin-btn"></a></p>
+            <p>&copy; 2026 - Tristan. Tous droits réservés.<a href="admin.html" class="secret-admin-btn"></a></p>
             <p class="last-update" id="view-date">Aucune sauvegarde détectée</p>
         </footer>
     </div>
 
     <script>
-        // Boutons par défaut si la mémoire est vide au premier démarrage
         const boutonsParDefaut = [
             { texte: "🚀 Rejoins mon serveur Discord !", url: "https://discord.gg/tonlink" },
             { texte: "📺 Ma chaîne YouTube", url: "https://youtube.com/" },
@@ -94,7 +139,6 @@
         ];
 
         function chargerDonnees() {
-            // 1. Gestion des statistiques
             if(localStorage.getItem("followers")) {
                 document.getElementById("view-followers").innerText = localStorage.getItem("followers");
                 document.getElementById("view-likes").innerText = localStorage.getItem("likes");
@@ -102,7 +146,6 @@
                 document.getElementById("view-date").innerText = "Dernière mise à jour : le " + localStorage.getItem("date_sauvegarde");
             }
 
-            // 2. Gestion et affichage dynamique des boutons
             let boutons = localStorage.getItem("liste_boutons");
             if (!boutons) {
                 boutons = boutonsParDefaut;
@@ -112,20 +155,40 @@
             }
 
             const wrapper = document.getElementById("links-wrapper");
-            wrapper.innerHTML = ""; // On vide pour reconstruire proprement
+            wrapper.innerHTML = "";
 
             boutons.forEach(bouton => {
                 const a = document.createElement("a");
                 a.href = bouton.url;
                 a.className = "tiktok-link";
-                // Si c'est un lien externe, on l'ouvre dans un nouvel onglet, sinon (ex: contact.html) normal
                 if(bouton.url.startsWith("http")) {
                     a.target = "_blank";
                 }
-                a.innerText = bouton.texte;
+                a.innerText = [...bouton.texte].join("");
                 wrapper.appendChild(a);
             });
         }
+
+        // SCRIPT POUR COPIER LE PSEUDO
+        document.getElementById("copy-username").addEventListener("click", function() {
+            // On récupère le texte du pseudo (sans les espaces ou balises enfants)
+            const pseudo = "@titidu25050";
+            
+            // Utilisation de l'API moderne du navigateur pour copier le texte
+            navigator.clipboard.writeText(pseudo).then(() => {
+                const tooltip = document.getElementById("tooltip");
+                
+                // On affiche la bulle "Copié !"
+                tooltip.classList.add("show");
+                
+                // On la cache automatiquement après 1.5 seconde
+                setTimeout(() => {
+                    tooltip.classList.remove("show");
+                }, 1500);
+            }).catch(err => {
+                console.error("Erreur lors de la copie : ", err);
+            });
+        });
 
         document.addEventListener("DOMContentLoaded", chargerDonnees);
         window.addEventListener("storage", chargerDonnees);
