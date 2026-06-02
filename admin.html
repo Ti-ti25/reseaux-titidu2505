@@ -3,86 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | Sécurisé</title>
+    <title>Console d'Administration</title>
     <style>
-        /* Par défaut, on cache tout le panneau tant que le mot de passe n'est pas bon */
-        body { background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif; display: none; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .admin-box { background-color: #1e293b; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 400px; }
-        h2 { text-align: center; margin-bottom: 1.5rem; color: #38bdf8; }
-        .form-group { margin-bottom: 1.2rem; }
-        label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; color: #94a3b8; }
-        input[type="text"] { width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; background-color: #0f172a; color: white; font-size: 1rem; box-sizing: border-box; }
-        button { width: 100%; padding: 0.8rem; background-color: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
-        button:hover { background-color: #1d4ed8; }
-        .msg { background-color: #065f46; color: #34d399; padding: 0.8rem; border-radius: 6px; text-align: center; margin-bottom: 1.5rem; display: none; }
-        .view-link { display: block; text-align: center; margin-top: 1.5rem; color: #94a3b8; text-decoration: none; font-size: 0.85rem; }
+        body { background-color: #0b0b0c; color: #ffffff; font-family: 'Segoe UI', sans-serif; padding: 2rem 1rem; display: flex; flex-direction: column; align-items: center; }
+        .admin-box { background-color: #121214; border: 1px solid #27272a; padding: 2rem; border-radius: 12px; width: 100%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 2rem; }
+        h2, h3 { text-align: center; margin-bottom: 1.5rem; color: #fe2c55; }
+        h3 { margin-top: 1rem; color: #00f2fe; border-top: 1px dashed #27272a; padding-top: 1.5rem; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.3rem; font-size: 0.9rem; color: #a1a1aa; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 0.7rem; border-radius: 6px; border: 1px solid #27272a; background-color: #010101; color: white; outline: none; box-sizing: border-box; }
+        input:focus { border-color: #fe2c55; }
+        button { width: 100%; padding: 0.8rem; background-color: #fe2c55; border: none; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem; }
+        button:hover { background-color: #dd1b43; }
+        
+        /* Gestion des boutons */
+        .btn-add { background-color: #00f2fe; color: #000; }
+        .btn-add:hover { background-color: #00c8d4; }
+        .liste-boutons { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .item-bouton { display: flex; justify-content: space-between; align-items: center; background: #1c1c1e; padding: 0.6rem; border-radius: 6px; border: 1px solid #27272a; font-size: 0.85rem; }
+        .item-info { display: flex; flex-direction: column; max-width: 55%; }
+        .item-url { color: #71717a; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .actions-btn { display: flex; gap: 0.3rem; }
+        .btn-action { width: auto; padding: 0.4rem 0.6rem; font-size: 0.75rem; margin: 0; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-edit { background-color: #ff9500; color: white; }
+        .btn-suppr { background-color: #3a3a3c; color: #ff453a; }
+        .btn-suppr:hover { background-color: #ff453a; color: white; }
+        
+        .back-btn { display: block; text-align: center; margin-top: 1.5rem; color: #71717a; text-decoration: none; font-size: 0.9rem; }
+        .back-btn:hover { color: white; }
+        
+        /* Verrouillage */
+        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; width: 100%; max-width: 500px; }
+        #admin-content { display: none; width: 100%; max-width: 500px; }
     </style>
 </head>
 <body>
-    <div class="admin-box">
-        <h2>Modifier mes Stats</h2>
-        <div class="msg" id="success-msg">✅ Statistiques mises à jour !</div>
-        
-        <form id="admin-form">
+
+    <div id="login-screen" class="admin-box">
+        <h2>🔒 Zone Sécurisée</h2>
+        <div class="form-group" style="width: 100%;">
+            <label for="password">Entrez le mot de passe admin :</label>
+            <input type="password" id="password" placeholder="Mot de passe">
+        </div>
+        <button onclick="verifierMotDePasse()">Connexion</button>
+        <a href="index.html" class="back-btn">← Retour</a>
+    </div>
+
+    <div id="admin-content">
+        <div class="admin-box">
+            <h2>🛠️ Menu Principal Admin</h2>
             <div class="form-group">
                 <label for="followers">Nombre de Suivis :</label>
-                <input type="text" id="followers" required>
+                <input type="text" id="followers" placeholder="Ex: 150">
             </div>
             <div class="form-group">
                 <label for="likes">Nombre d'Abonnés :</label>
-                <input type="text" id="likes" required>
+                <input type="text" id="likes" placeholder="Ex: 10K">
             </div>
             <div class="form-group">
                 <label for="domaine">Nombre de J'aime :</label>
-                <input type="text" id="domaine" required>
+                <input type="text" id="domaine" placeholder="Ex: 150K">
             </div>
-            <button type="submit">Sauvegarder les modifications</button>
-        </form>
-        <a href="index.html" class="view-link">← Voir ma page TikTok</a>
+            <button onclick="sauvegarderStats()">Enregistrer les Statistiques</button>
+
+            <h3>🔗 Gestion des Liens d'Accueil</h3>
+            
+            <input type="hidden" id="edit-index" value="-1">
+
+            <div class="form-group">
+                <label for="new-text">Texte du bouton :</label>
+                <input type="text" id="new-text" placeholder="Ex: 📸 Mon Instagram">
+            </div>
+            <div class="form-group">
+                <label for="new-url">Lien URL :</label>
+                <input type="text" id="new-url" placeholder="Ex: https://instagram.com/pseudo">
+            </div>
+            <button id="btn-submit-bouton" class="btn-add" onclick="validerBouton()">+ Ajouter ce bouton</button>
+
+            <div class="liste-boutons" id="liste-wrapper"></div>
+
+            <a href="index.html" class="back-btn">← Retour au Profil</a>
+        </div>
     </div>
 
     <script>
-        // --- SÉCURITÉ MOT DE PASSE ---
-        const motDePasseCorrect = "Titi25"; // Tu peux changer ton mot de passe ici !
-        
-        // Demande le mot de passe dès que la page s'ouvre
-        const saisieUtilisateur = prompt("Veuillez entrer le mot de passe administrateur :");
+        // Le mot de passe secret actuel
+        const MOT_DE_PASSE_CORRECT = "1234"; 
 
-        if (saisieUtilisateur === motDePasseCorrect) {
-            // Si le mot de passe est bon, on affiche la page
-            document.body.style.display = "flex";
-        } else {
-            // Si c'est faux, alerte et redirection automatique vers la page publique
-            alert("Mot de passe incorrect ! Accès refusé.");
-            window.location.href = "index.html"; 
+        function verifierMotDePasse() {
+            const saisie = document.getElementById("password").value;
+            if (saisie === MOT_DE_PASSE_CORRECT) {
+                document.getElementById("login-screen").style.display = "none";
+                document.getElementById("admin-content").style.display = "block";
+                initialiserAdmin();
+            } else {
+                alert("Mot de passe incorrect ❌");
+            }
         }
 
-        // --- GESTION DU FORMULAIRE ---
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("followers").value = localStorage.getItem("followers") || "150";
-            document.getElementById("likes").value = localStorage.getItem("likes") || "10K";
-            document.getElementById("domaine").value = localStorage.getItem("domaine") || "150K";
-        });
+        function initialiserAdmin() {
+            if(localStorage.getItem("followers")) {
+                document.getElementById("followers").value = localStorage.getItem("followers");
+                document.getElementById("likes").value = localStorage.getItem("likes");
+                document.getElementById("domaine").value = localStorage.getItem("domaine");
+            }
+            afficherListeBoutons();
+        }
 
-        document.getElementById("admin-form").addEventListener("submit", (e) => {
-            e.preventDefault();
+        function sauvegarderStats() {
+            const f = document.getElementById("followers").value;
+            const l = document.getElementById("likes").value;
+            const d = document.getElementById("domaine").value;
             
-            const followers = document.getElementById("followers").value;
-            const likes = document.getElementById("likes").value;
-            const domaine = document.getElementById("domaine").value;
-            
-            const maintenant = new Date();
-            const dateFormatee = maintenant.toLocaleDateString('fr-FR') + " à " + maintenant.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+            const date = new Date();
+            const dateFormatee = date.toLocaleDateString() + " à " + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
-            localStorage.setItem("followers", followers);
-            localStorage.setItem("likes", likes);
-            localStorage.setItem("domaine", domaine);
+            localStorage.setItem("followers", f);
+            localStorage.setItem("likes", l);
+            localStorage.setItem("domaine", d);
             localStorage.setItem("date_sauvegarde", dateFormatee);
 
-            const msgBox = document.getElementById("success-msg");
-            msgBox.style.display = "block";
-            setTimeout(() => { msgBox.style.display = "none"; }, 3000);
-        });
+            alert("Statistiques mises à jour !");
+        }
+
+        function afficherListeBoutons() {
+            let boutons = localStorage.getItem("liste_boutons");
+            boutons = boutons ? JSON.parse(boutons) : [];
+
+            const wrapper = document.getElementById("liste-wrapper");
+            wrapper.innerHTML = "";
+
+            boutons.forEach((bouton, index) => {
+                const div = document.createElement("div");
+                div.className = "item-bouton";
+                div.innerHTML = `
+                    <div class="item-info">
+                        <strong>${bouton.texte}</strong>
+                        <span class="item-url">${bouton.url}</span>
+                    </div>
+                    <div class="actions-btn">
+                        <button class="btn-action btn-edit" onclick="chargerPourModifier(${index})">Modifier</button>
+                        <button class="btn-action btn-suppr" onclick="supprimerBouton(${index})">X</button>
+                    </div>
+                `;
+                wrapper.appendChild(div);
+            });
+        }
+
+        function validerBouton() {
+            const texte = document.getElementById("new-text").value.trim();
+            const url = document.getElementById("new-url").value.trim();
+            const editIndex = parseInt(document.getElementById("edit-index").value);
+
+            if(!texte || !url) {
+                alert("Veuillez remplir le texte et l'URL.");
+                return;
+            }
+
+            let boutons = JSON.parse(localStorage.getItem("liste_boutons")) || [];
+
+            if (editIndex === -1) {
+                // Mode : Ajout
+                boutons.push({ texte: texte, url: url });
+            } else {
+                // Mode : Modification
+                boutons[editIndex] = { texte: texte, url: url };
+                document.getElementById("edit-index").value = "-1";
+                const btnSubmit = document.getElementById("btn-submit-bouton");
+                btnSubmit.innerText = "+ Ajouter ce bouton";
+                btnSubmit.style.backgroundColor = "#00f2fe";
+                btnSubmit.style.color = "#000";
+            }
+
+            localStorage.setItem("liste_boutons", JSON.stringify(boutons));
+
+            document.getElementById("new-text").value = "";
+            document.getElementById("new-url").value = "";
+            afficherListeBoutons();
+        }
+
+        function chargerPourModifier(index) {
+            let boutons = JSON.parse(localStorage.getItem("liste_boutons"));
+            const bouton = boutons[index];
+
+            document.getElementById("new-text").value = bouton.texte;
+            document.getElementById("new-url").value = bouton.url;
+            document.getElementById("edit-index").value = index;
+
+            const btnSubmit = document.getElementById("btn-submit-bouton");
+            btnSubmit.innerText = "💾 Enregistrer la modification";
+            btnSubmit.style.backgroundColor = "#ff9500";
+            btnSubmit.style.color = "#fff";
+        }
+
+        function supprimerBouton(index) {
+            let boutons = JSON.parse(localStorage.getItem("liste_boutons"));
+            boutons.splice(index, 1);
+            localStorage.setItem("liste_boutons", JSON.stringify(boutons));
+            
+            document.getElementById("edit-index").value = "-1";
+            const btnSubmit = document.getElementById("btn-submit-bouton");
+            btnSubmit.innerText = "+ Ajouter ce bouton";
+            btnSubmit.style.backgroundColor = "#00f2fe";
+            btnSubmit.style.color = "#000";
+            document.getElementById("new-text").value = "";
+            document.getElementById("new-url").value = "";
+
+            afficherListeBoutons();
+        }
     </script>
 </body>
 </html>
