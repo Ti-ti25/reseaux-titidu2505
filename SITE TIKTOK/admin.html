@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Sécurisé</title>
+    <style>
+        /* Par défaut, on cache tout le panneau tant que le mot de passe n'est pas bon */
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif; display: none; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .admin-box { background-color: #1e293b; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 400px; }
+        h2 { text-align: center; margin-bottom: 1.5rem; color: #38bdf8; }
+        .form-group { margin-bottom: 1.2rem; }
+        label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; color: #94a3b8; }
+        input[type="text"] { width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; background-color: #0f172a; color: white; font-size: 1rem; box-sizing: border-box; }
+        button { width: 100%; padding: 0.8rem; background-color: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
+        button:hover { background-color: #1d4ed8; }
+        .msg { background-color: #065f46; color: #34d399; padding: 0.8rem; border-radius: 6px; text-align: center; margin-bottom: 1.5rem; display: none; }
+        .view-link { display: block; text-align: center; margin-top: 1.5rem; color: #94a3b8; text-decoration: none; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="admin-box">
+        <h2>Modifier mes Stats</h2>
+        <div class="msg" id="success-msg">✅ Statistiques mises à jour !</div>
+        
+        <form id="admin-form">
+            <div class="form-group">
+                <label for="followers">Nombre de Suivis :</label>
+                <input type="text" id="followers" required>
+            </div>
+            <div class="form-group">
+                <label for="likes">Nombre d'Abonnés :</label>
+                <input type="text" id="likes" required>
+            </div>
+            <div class="form-group">
+                <label for="domaine">Nombre de J'aime :</label>
+                <input type="text" id="domaine" required>
+            </div>
+            <button type="submit">Sauvegarder les modifications</button>
+        </form>
+        <a href="index.html" class="view-link">← Voir ma page TikTok</a>
+    </div>
+
+    <script>
+        // --- SÉCURITÉ MOT DE PASSE ---
+        const motDePasseCorrect = "Titi25"; // Tu peux changer ton mot de passe ici !
+        
+        // Demande le mot de passe dès que la page s'ouvre
+        const saisieUtilisateur = prompt("Veuillez entrer le mot de passe administrateur :");
+
+        if (saisieUtilisateur === motDePasseCorrect) {
+            // Si le mot de passe est bon, on affiche la page
+            document.body.style.display = "flex";
+        } else {
+            // Si c'est faux, alerte et redirection automatique vers la page publique
+            alert("Mot de passe incorrect ! Accès refusé.");
+            window.location.href = "index.html"; 
+        }
+
+        // --- GESTION DU FORMULAIRE ---
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("followers").value = localStorage.getItem("followers") || "150";
+            document.getElementById("likes").value = localStorage.getItem("likes") || "10K";
+            document.getElementById("domaine").value = localStorage.getItem("domaine") || "150K";
+        });
+
+        document.getElementById("admin-form").addEventListener("submit", (e) => {
+            e.preventDefault();
+            
+            const followers = document.getElementById("followers").value;
+            const likes = document.getElementById("likes").value;
+            const domaine = document.getElementById("domaine").value;
+            
+            const maintenant = new Date();
+            const dateFormatee = maintenant.toLocaleDateString('fr-FR') + " à " + maintenant.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+
+            localStorage.setItem("followers", followers);
+            localStorage.setItem("likes", likes);
+            localStorage.setItem("domaine", domaine);
+            localStorage.setItem("date_sauvegarde", dateFormatee);
+
+            const msgBox = document.getElementById("success-msg");
+            msgBox.style.display = "block";
+            setTimeout(() => { msgBox.style.display = "none"; }, 3000);
+        });
+    </script>
+</body>
+</html>
