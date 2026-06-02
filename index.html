@@ -51,7 +51,6 @@
         footer { margin-top: auto; padding-top: 3rem; font-size: 0.8rem; color: #3f3f46; position: relative; }
         .last-update { font-size: 0.75rem; color: #71717a; margin-top: 0.5rem; font-style: italic; }
 
-        /* LE BOUTON SECRET TOUJOURS LÀ (Petit point discret après le copyright) */
         .secret-admin-btn {
             display: inline-block;
             width: 6px;
@@ -68,4 +67,68 @@
 </head>
 <body>
     <div class="container">
-        <div class="avatar-container"><div class="avatar"><img src="
+        <div class="avatar-container"><div class="avatar"><img src="https://via.placeholder.com/150" alt="Profil"></div></div>
+        <h1>Tristan 🌐</h1>
+        <span class="username">@ton_pseudo_tiktok</span>
+
+        <div class="stats-box">
+            <div class="stat-item"><span class="stat-value" id="view-followers">150</span><span class="stat-label">Suivi</span></div>
+            <div class="stat-item"><span class="stat-value" id="view-likes">10K</span><span class="stat-label">Abonné</span></div>
+            <div class="stat-item"><span class="stat-value" id="view-domaine">150K</span><span class="stat-label">J'aime</span></div>
+        </div>
+
+        <div class="links-container" id="links-wrapper"></div>
+
+        <footer>
+            <p>&copy; 2026 - Tristan. Tous droits réservés.<a href="admin.html" class="secret-admin-btn"></a></p>
+            <p class="last-update" id="view-date">Aucune sauvegarde détectée</p>
+        </footer>
+    </div>
+
+    <script>
+        // Boutons par défaut si la mémoire est vide au premier démarrage
+        const boutonsParDefaut = [
+            { texte: "🚀 Rejoins mon serveur Discord !", url: "https://discord.gg/tonlink" },
+            { texte: "📺 Ma chaîne YouTube", url: "https://youtube.com/" },
+            { texte: "📩 Contact Pro / Partenariats", url: "contact.html" }
+        ];
+
+        function chargerDonnees() {
+            // 1. Gestion des statistiques
+            if(localStorage.getItem("followers")) {
+                document.getElementById("view-followers").innerText = localStorage.getItem("followers");
+                document.getElementById("view-likes").innerText = localStorage.getItem("likes");
+                document.getElementById("view-domaine").innerText = localStorage.getItem("domaine");
+                document.getElementById("view-date").innerText = "Dernière mise à jour : le " + localStorage.getItem("date_sauvegarde");
+            }
+
+            // 2. Gestion et affichage dynamique des boutons
+            let boutons = localStorage.getItem("liste_boutons");
+            if (!boutons) {
+                boutons = boutonsParDefaut;
+                localStorage.setItem("liste_boutons", JSON.stringify(boutonsParDefaut));
+            } else {
+                boutons = JSON.parse(boutons);
+            }
+
+            const wrapper = document.getElementById("links-wrapper");
+            wrapper.innerHTML = ""; // On vide pour reconstruire proprement
+
+            boutons.forEach(bouton => {
+                const a = document.createElement("a");
+                a.href = bouton.url;
+                a.className = "tiktok-link";
+                // Si c'est un lien externe, on l'ouvre dans un nouvel onglet, sinon (ex: contact.html) normal
+                if(bouton.url.startsWith("http")) {
+                    a.target = "_blank";
+                }
+                a.innerText = bouton.texte;
+                wrapper.appendChild(a);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", chargerDonnees);
+        window.addEventListener("storage", chargerDonnees);
+    </script>
+</body>
+</html>
