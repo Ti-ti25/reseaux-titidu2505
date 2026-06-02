@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tristan | Communauté TikTok</title>
     <style>
-        :root { --bg-color: #010101; --tiktok-cyan: #00f2fe; --tiktok-pink: #fe2c55; --card-bg: #121212; --text-color: #ffffff; }
+        :root { 
+            --bg-color: #010101; 
+            --tiktok-cyan: #00f2fe; 
+            --tiktok-pink: #fe2c55; 
+            --card-bg: #121212; 
+            --text-color: #ffffff; 
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 2rem 1rem; }
         .container { max-width: 450px; width: 100%; text-align: center; }
@@ -19,56 +25,96 @@
         .stat-value { font-weight: 700; font-size: 1.25rem; color: #ffffff; transition: color 0.3s ease; }
         .stat-label { font-size: 0.85rem; color: #71717a; margin-top: 0.2rem; }
         .links-container { display: flex; flex-direction: column; gap: 1rem; }
-        .tiktok-link { background-color: var(--card-bg); border: 1px solid #27272a; color: white; text-decoration: none; padding: 1.1rem; border-radius: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s ease; }
-        .tiktok-link:hover { transform: scale(1.02); background: #ff0055; border-color: #ff0055; box-shadow: 0 0 15px #ff0055; }
-        footer { margin-top: auto; padding-top: 3rem; font-size: 0.8rem; color: #3f3f46; }
+        
+        .tiktok-link { 
+            background-color: var(--card-bg); 
+            border: 1px solid #27272a; 
+            color: white; 
+            text-decoration: none; 
+            padding: 1.1rem; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 0.5rem; 
+            transition: all 0.2s ease; 
+        }
+        
+        .tiktok-link:hover { 
+            transform: scale(1.02); 
+            background: #ff0055; 
+            border-color: #ff0055;
+            box-shadow: 0 0 15px #ff0055; 
+        }
+
+        footer { margin-top: auto; padding-top: 3rem; font-size: 0.8rem; color: #3f3f46; position: relative; }
         .last-update { font-size: 0.75rem; color: #71717a; margin-top: 0.5rem; font-style: italic; }
+
+        /* LE BOUTON SECRET ULTRA DISCRET */
+        .secret-admin-btn {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: #1c1c1e; /* Couleur très proche du fond noir pour se fondre dans le décor */
+            border-radius: 50%;
+            text-decoration: none;
+            margin-left: 5px;
+            vertical-align: middle;
+            cursor: default; /* Curseur normal pour ne pas lever de soupçons au survol */
+            transition: background-color 0.3s;
+        }
+        /* Devient légèrement visible uniquement si on sait exactement où poser la souris */
+        .secret-admin-btn:hover {
+            background-color: #3a3a3c;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="avatar-container"><div class="avatar"><img src="https://via.placeholder.com/150" alt="Profil"></div></div>
+        <div class="avatar-container"><div class="avatar"><img src="voila.png" alt="Profil"></div></div>
         <h1>Tristan 🌐</h1>
         <span class="username">@ton_pseudo_tiktok</span>
 
         <div class="stats-box">
-            <div class="stat-item"><span class="stat-value" id="view-followers">...</span><span class="stat-label">Suivi</span></div>
-            <div class="stat-item"><span class="stat-value" id="view-likes">...</span><span class="stat-label">Abonné</span></div>
-            <div class="stat-item"><span class="stat-value" id="view-domaine">...</span><span class="stat-label">J'aime</span></div>
+            <div class="stat-item"><span class="stat-value" id="view-followers">150</span><span class="stat-label">Suivi</span></div>
+            <div class="stat-item"><span class="stat-value" id="view-likes">10K</span><span class="stat-label">Abonné</span></div>
+            <div class="stat-item"><span class="stat-value" id="view-domaine">150K</span><span class="stat-label">J'aime</span></div>
         </div>
 
         <div class="links-container">
             <a href="https://discord.gg/tonlink" target="_blank" class="tiktok-link">🚀 Rejoins mon serveur Discord !</a>
             <a href="https://youtube.com/" target="_blank" class="tiktok-link">📺 Ma chaîne YouTube</a>
             <a href="https://instagram.com/ton_pseudo" target="_blank" class="tiktok-link">📸 Mon Instagram</a>
-            <a href="mailto:ton.email.pro@email.com" class="tiktok-link">📩 Contact Pro / Partenariats</a>
+            <a href="contact.html" class="tiktok-link">📩 Contact Pro / Partenariats</a>
         </div>
         <footer>
-            <p>&copy; 2026 - Tristan. Tous droits réservés.</p>
-            <p class="last-update" id="view-date">Connexion au serveur...</p>
+            <!-- Le bouton secret est le petit point placé juste après le copyright -->
+            <p>&copy; 2026 - Tristan. Tous droits réservés.<a href="admin.html" class="secret-admin-btn" title=""></a></p>
+            <p class="last-update" id="view-date">Aucune sauvegarde détectée</p>
         </footer>
     </div>
 
     <script>
-        // Récupérer les données du fichier JSON en ligne
-        async function chargerDonneesJSON() {
-            try {
-                const reponse = await fetch('stats.json?t=' + new Date().getTime()); // Évite le cache du navigateur
-                const data = await reponse.json();
-                
-                document.getElementById("view-followers").innerText = data.followers;
-                document.getElementById("view-likes").innerText = data.likes;
-                document.getElementById("view-domaine").innerText = data.domaine;
-                document.getElementById("view-date").innerText = "Mis à jour le : " + data.date_sauvegarde;
-            } catch (erreur) {
-                console.error("Erreur de chargement des stats:", erreur);
+        function chargerDonnees() {
+            if(localStorage.getItem("followers")) {
+                document.getElementById("view-followers").innerText = localStorage.getItem("followers");
+                document.getElementById("view-likes").innerText = localStorage.getItem("likes");
+                document.getElementById("view-domaine").innerText = localStorage.getItem("domaine");
+                document.getElementById("view-date").innerText = "Dernière sauvegarde : le " + localStorage.getItem("date_sauvegarde");
             }
         }
 
-        // Charger au démarrage
-        document.addEventListener("DOMContentLoaded", chargerDonneesJSON);
-        // Rafraîchir automatiquement toutes les 5 secondes pour voir les changements en direct
-        setInterval(chargerDonneesJSON, 5000);
+        document.addEventListener("DOMContentLoaded", chargerDonnees);
+
+        window.addEventListener("storage", () => {
+            chargerDonnees();
+            const valeurs = document.querySelectorAll(".stat-value");
+            valeurs.forEach(el => el.style.color = "#00f2fe");
+            setTimeout(() => {
+                valeurs.forEach(el => el.style.color = "#ffffff");
+            }, 500);
+        });
     </script>
 </body>
 </html>
