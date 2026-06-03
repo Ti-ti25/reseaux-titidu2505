@@ -5,184 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon Arbre de Liens TikTok</title>
     <style>
-        :root {
-            --bg-color: #010101;
-            --text-color: #ffffff;
-            --card-bg: #121212;
-            --accent-color: #fe2c55;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 480px;
-            text-align: center;
-            margin-top: 40px;
-        }
-
-        /* Correction de la photo pour éviter qu'elle soit écrasée */
-        .profile-img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 3px solid var(--accent-color);
-            object-fit: cover;
-            margin-bottom: 15px;
-            background-color: #333; /* Fond gris si l'image ne charge pas */
-        }
-
-        .username {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 30px;
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #222;
-        }
-
-        .stat-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .stat-number {
-            font-size: 1.3rem;
-            font-weight: 800;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: #8a8a8a;
-            margin-top: 4px;
-        }
-
-        .links-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .link-card {
-            background-color: var(--card-bg);
-            border: 1px solid #222;
-            padding: 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            color: var(--text-color);
-            font-weight: 600;
-            transition: transform 0.2s, border-color 0.2s;
-            display: block;
-        }
-
-        .link-card:hover {
-            transform: scale(1.02);
-            border-color: var(--accent-color);
-        }
-
-        .update-date {
-            font-size: 0.75rem;
-            color: #444;
-            margin-top: 25px;
-        }
-
-        /* --- LE BOUTON SECRET REVIENT ICI --- */
-        .secret-admin-btn {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: #222; /* Très discret sur fond noir */
-            border-radius: 50%;
-            text-decoration: none;
-            margin-top: 20px;
-            cursor: default;
-            transition: background-color 0.2s;
-        }
+        :root { --bg-color: #010101; --text-color: #ffffff; --card-bg: #121212; --accent-color: #fe2c55; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 480px; text-align: center; margin-top: 40px; }
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--accent-color); object-fit: cover; margin-bottom: 15px; }
+        .username { font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; }
+        .stats-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 30px; background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid #222; }
+        .stat-box { display: flex; flex-direction: column; align-items: center; }
+        .stat-number { font-size: 1.3rem; font-weight: 800; }
+        .stat-label { font-size: 0.8rem; color: #8a8a8a; margin-top: 4px; }
         
-        .secret-admin-btn:hover {
-            background-color: var(--accent-color); /* Devient rouge si tu passes la souris dessus */
-        }
+        .links-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
+        .link-card { background-color: var(--card-bg); border: 1px solid #222; padding: 16px; border-radius: 8px; text-decoration: none; color: var(--text-color); font-weight: 600; transition: transform 0.2s, border-color 0.2s; display: block; }
+        .link-card:hover { transform: scale(1.02); border-color: var(--accent-color); }
+        
+        .update-date { font-size: 0.75rem; color: #444; margin-top: 25px; }
+        .secret-admin-btn { display: inline-block; width: 8px; height: 8px; background-color: #222; border-radius: 50%; text-decoration: none; margin-top: 20px; }
+        .secret-admin-btn:hover { background-color: var(--accent-color); }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Remplace le src="..." par le vrai lien de ta photo TikTok si tu l'as -->
         <img class="profile-img" src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=150" alt="Avatar">
         <div class="username">@titidu2505</div>
 
         <div class="stats-container">
-            <div class="stat-box">
-                <span class="stat-number" id="view-followers">--</span>
-                <span class="stat-label">Abonnés</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-number" id="view-likes">--</span>
-                <span class="stat-label">J'aime</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-number" id="view-domaine">--</span>
-                <span class="stat-label">Domaine</span>
-            </div>
+            <div class="stat-box"><span class="stat-number" id="view-followers">--</span><span class="stat-label">Abonnés</span></div>
+            <div class="stat-box"><span class="stat-number" id="view-likes">--</span><span class="stat-label">J'aime</span></div>
+            <div class="stat-box"><span class="stat-number" id="view-domaine">--</span><span class="stat-label">Domaine</span></div>
         </div>
 
-        <div class="links-list">
-            <a href="https://www.tiktok.com" target="_blank" class="link-card">Mon TikTok</a>
-            <a href="https://www.youtube.com" target="_blank" class="link-card">Mon YouTube</a>
-            <a href="https://github.com" target="_blank" class="link-card">Mon GitHub</a>
-        </div>
+        <!-- ZONE DES BOUTONS RECONSTRUITE PAR LE SCRIPT -->
+        <div class="links-list" id="affichage-liens"></div>
 
         <div class="update-date" id="view-date">Chargement...</div>
-
-        <!-- Le petit bouton secret de l'admin (un petit point discret sous la date) -->
-        <a href="/admin.html" class="secret-admin-btn" title="Espace Secret"></a>
+        <a href="/admin.html" class="secret-admin-btn"></a>
     </div>
 
     <script>
-        async function chargerDonneesDuServeur() {
+        async function chargerDonnees() {
             try {
-                const reponse = await fetch('/api/stats');
+                const reponse = await fetch('/api/data');
                 const data = await reponse.json();
                 
-                const elemFollowers = document.getElementById("view-followers");
-                if(elemFollowers) elemFollowers.innerText = data.followers;
+                // 1. Appliquer les statistiques
+                document.getElementById("view-followers").innerText = data.stats.followers;
+                document.getElementById("view-likes").innerText = data.stats.likes;
+                document.getElementById("view-domaine").innerText = data.stats.domaine;
+                document.getElementById("view-date").innerText = "Dernière synchro : " + data.stats.date_sauvegarde;
 
-                const elemLikes = document.getElementById("view-likes");
-                if(elemLikes) elemLikes.innerText = data.likes;
-
-                const elemDomaine = document.getElementById("view-domaine");
-                if(elemDomaine) elemDomaine.innerText = data.domaine;
-
-                const elemDate = document.getElementById("view-date");
-                if(elemDate) elemDate.innerText = "Dernière synchro : " + data.date_sauvegarde;
+                // 2. Construire dynamiquement les boutons réseaux dans le bon ordre
+                const conteneurLiens = document.getElementById("affichage-liens");
+                conteneurLiens.innerHTML = "";
+                
+                data.liens.forEach(lien => {
+                    const a = document.createElement('a');
+                    a.href = lien.url;
+                    a.target = "_blank";
+                    a.className = "link-card";
+                    a.innerText = lien.texte;
+                    conteneurLiens.appendChild(a);
+                });
 
             } catch (erreur) {
-                console.error("Erreur stats:", erreur);
+                console.error("Erreur de synchronisation globale:", erreur);
             }
         }
 
-        document.addEventListener("DOMContentLoaded", chargerDonneesDuServeur);
-        setInterval(chargerDonneesDuServeur, 3000);
+        document.addEventListener("DOMContentLoaded", chargerDonnees);
+        setInterval(chargerDonnees, 3000); // Rafraîchissement automatique
     </script>
 </body>
 </html>
