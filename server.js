@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-const MOT_DE_PASSE_SECRET = "Tristan2026";
+const MOT_DE_PASSE_SECRET = "Titidu25";
 
 let donneesSite = {
     stats: {
