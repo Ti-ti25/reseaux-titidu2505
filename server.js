@@ -5,36 +5,53 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Stockage temporaire en mémoire
+// Définis ton mot de passe secret ici (tu peux le changer)
+const MOT_DE_PASSE_SECRET = "Tristan2026";
+
+// Stockage initial des données avec ton design d'origine
 let donnéesSite = {
     stats: {
         followers: "150",
         likes: "10K",
         domaine: "150K",
-        date_sauvegarde: "Non modifiée"
+        date_sauvegarde: "Aucune sauvegarde détectée"
     },
     liens: [
-        { id: 1, texte: "Mon TikTok", url: "https://www.tiktok.com" },
-        { id: 2, texte: "Mon YouTube", url: "https://www.youtube.com" },
-        { id: 3, texte: "Mon GitHub", url: "https://github.com" }
+        { texte: "🚀 Rejoins mon serveur Discord !", url: "https://discord.com/invite/V4YMKzWYEM" },
+        { texte: "📺 Ma chaîne YouTube", url: "https://youtube.com/" },
+        { texte: "📸 Mon Instagram", url: "https://instagram.com/ton_pseudo" },
+        { texte: "📩 Contact Pro / Partenariats", url: "mailto:ton.email.pro@email.com" }
     ]
 };
 
-// Route API unique pour TOUT récupérer d'un coup
+// Route pour envoyer les données au site public (sans mot de passe)
 app.get('/api/data', (req, res) => {
     res.json(donnéesSite);
 });
 
-// Route API pour TOUT sauvegarder d'un coup (stats + ordre des boutons)
+// Route de vérification du mot de passe (quand on se connecte au panel)
+app.post('/api/login', (req, res) => {
+    const { password } = req.body;
+    if (password === MOT_DE_PASSE_SECRET) {
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ success: false, message: "Mot de passe incorrect !" });
+    }
+});
+
+// Route sécurisée pour sauvegarder les modifications
 app.post('/api/data', (req, res) => {
-    donnéesSite = {
-        stats: req.body.stats,
-        liens: req.body.liens
-    };
+    const { password, stats, liens } = req.body;
+    
+    if (password !== MOT_DE_PASSE_SECRET) {
+        return res.status(403).json({ error: "Accès refusé : Mot de passe invalide." });
+    }
+
+    donnéesSite = { stats, liens };
     res.json({ message: "OK" });
 });
 
-// Forcer l'affichage des pages HTML
+// Redirection vers les fichiers HTML
 app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'index.html'));
 });
@@ -46,5 +63,5 @@ app.get('/admin.html', (req, res) => {
 app.use(express.static(__dirname));
 
 app.listen(PORT, () => {
-    console.log(`Serveur en ligne sur le port ${PORT}`);
+    console.log(`Serveur actif sur le port ${PORT}`);
 });
