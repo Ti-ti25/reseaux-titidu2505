@@ -84,14 +84,12 @@
                 const response = await fetch('/api/stats');
                 const data = await response.json();
 
-                // Effet flash bleu si changement
                 if (anciennesStats.followers && (anciennesStats.followers !== data.stats.followers || anciennesStats.likes !== data.stats.likes || anciennesStats.domaine !== data.stats.domaine)) {
                     const valeurs = document.querySelectorAll(".stat-value");
                     valeurs.forEach(el => el.style.color = "#00f2fe");
                     setTimeout(() => valeurs.forEach(el => el.style.color = "#ffffff"), 500);
                 }
 
-                // Insertion des textes de manière sécurisée
                 document.getElementById("view-followers").innerText = data.stats.followers;
                 document.getElementById("view-likes").innerText = data.stats.likes;
                 document.getElementById("view-domaine").innerText = data.stats.domaine;
@@ -99,15 +97,22 @@
 
                 anciennesStats = { ...data.stats };
 
-                // Génération des boutons
                 const conteneur = document.getElementById("affichage-liens");
                 conteneur.innerHTML = "";
                 data.liens.forEach(lien => {
                     const a = document.createElement('a');
                     a.href = lien.url;
-                    a.target = "_blank";
                     a.className = "tiktok-link";
                     a.innerText = lien.texte;
+
+                    // CORRECTION ICI : Si c'est un lien vers contact.html, on l'ouvre dans le même onglet (_self)
+                    if (lien.url.includes("contact.html")) {
+                        a.target = "_self"; 
+                    } else {
+                        // Sinon (Discord, YouTube, Insta...), on ouvre un nouvel onglet
+                        a.target = "_blank"; 
+                    }
+
                     conteneur.appendChild(a);
                 });
             } catch (err) {
