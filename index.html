@@ -10,7 +10,6 @@
             --text-color: #ffffff;
             --card-bg: #121212;
             --accent-color: #fe2c55;
-            --secondary-accent: #25f4ee;
         }
 
         body {
@@ -32,23 +31,23 @@
             margin-top: 40px;
         }
 
+        /* Correction de la photo pour éviter qu'elle soit écrasée */
         .profile-img {
-            width: 96px;
-            height: 96px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             border: 3px solid var(--accent-color);
             object-fit: cover;
             margin-bottom: 15px;
+            background-color: #333; /* Fond gris si l'image ne charge pas */
         }
 
         .username {
             font-size: 1.2rem;
             font-weight: bold;
             margin-bottom: 20px;
-            color: var(--text-color);
         }
 
-        /* Grille des statistiques */
         .stats-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -69,7 +68,6 @@
         .stat-number {
             font-size: 1.3rem;
             font-weight: 800;
-            color: var(--text-color);
         }
 
         .stat-label {
@@ -78,7 +76,6 @@
             margin-top: 4px;
         }
 
-        /* Liens */
         .links-list {
             display: flex;
             flex-direction: column;
@@ -105,15 +102,33 @@
 
         .update-date {
             font-size: 0.75rem;
-            color: #555;
+            color: #444;
             margin-top: 25px;
+        }
+
+        /* --- LE BOUTON SECRET REVIENT ICI --- */
+        .secret-admin-btn {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #222; /* Très discret sur fond noir */
+            border-radius: 50%;
+            text-decoration: none;
+            margin-top: 20px;
+            cursor: default;
+            transition: background-color 0.2s;
+        }
+        
+        .secret-admin-btn:hover {
+            background-color: var(--accent-color); /* Devient rouge si tu passes la souris dessus */
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <img class="profile-img" src="https://via.placeholder.com/150" alt="Avatar">
+        <!-- Remplace le src="..." par le vrai lien de ta photo TikTok si tu l'as -->
+        <img class="profile-img" src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=150" alt="Avatar">
         <div class="username">@titidu2505</div>
 
         <div class="stats-container">
@@ -132,17 +147,42 @@
         </div>
 
         <div class="links-list">
-            <a href="#" class="link-card">Mon TikTok</a>
-            <a href="#" class="link-card">Mon YouTube</a>
-            <a href="#" class="link-card">Mon GitHub</a>
-            <a href="/admin.html" class="link-card" style="border-style: dashed;">Espace Admin Secrète</a>
+            <a href="https://www.tiktok.com" target="_blank" class="link-card">Mon TikTok</a>
+            <a href="https://www.youtube.com" target="_blank" class="link-card">Mon YouTube</a>
+            <a href="https://github.com" target="_blank" class="link-card">Mon GitHub</a>
         </div>
 
-        <div class="update-date" id="view-date">Chargement des données...</div>
+        <div class="update-date" id="view-date">Chargement...</div>
+
+        <!-- Le petit bouton secret de l'admin (un petit point discret sous la date) -->
+        <a href="/admin.html" class="secret-admin-btn" title="Espace Secret"></a>
     </div>
 
     <script>
         async function chargerDonneesDuServeur() {
             try {
                 const reponse = await fetch('/api/stats');
-                const data = await reponse.json
+                const data = await reponse.json();
+                
+                const elemFollowers = document.getElementById("view-followers");
+                if(elemFollowers) elemFollowers.innerText = data.followers;
+
+                const elemLikes = document.getElementById("view-likes");
+                if(elemLikes) elemLikes.innerText = data.likes;
+
+                const elemDomaine = document.getElementById("view-domaine");
+                if(elemDomaine) elemDomaine.innerText = data.domaine;
+
+                const elemDate = document.getElementById("view-date");
+                if(elemDate) elemDate.innerText = "Dernière synchro : " + data.date_sauvegarde;
+
+            } catch (erreur) {
+                console.error("Erreur stats:", erreur);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", chargerDonneesDuServeur);
+        setInterval(chargerDonneesDuServeur, 3000);
+    </script>
+</body>
+</html>
