@@ -4,8 +4,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-// Permet de lire les formulaires classiques si besoin
-app.use(express.urlencoded({ extended: true })); 
 
 const MOT_DE_PASSE_SECRET = "Tristan2026";
 
@@ -24,12 +22,10 @@ let donneesSite = {
     ]
 };
 
-// Route pour l'index
 app.get('/api/stats', (req, res) => {
     res.json(donneesSite);
 });
 
-// Connexion Admin
 app.post('/api/login', (req, res) => {
     const { password } = req.body;
     if (password === MOT_DE_PASSE_SECRET) {
@@ -39,7 +35,6 @@ app.post('/api/login', (req, res) => {
     }
 });
 
-// Sauvegarde Admin
 app.post('/api/save', (req, res) => {
     const { password, stats, liens } = req.body;
     if (password !== MOT_DE_PASSE_SECRET) {
@@ -50,18 +45,6 @@ app.post('/api/save', (req, res) => {
     res.json({ success: true });
 });
 
-// 📩 NOUVELLE ROUTE : Reçoit les messages du formulaire de contact
-app.post('/api/contact', (req, res) => {
-    const { name, email, message } = req.body;
-    
-    // Ici, le serveur reçoit les données. On affiche le message dans la console Render
-    console.log(`📩 Nouveau message de de ${name} (${email}) : ${message}`);
-    
-    // On répond au navigateur que tout est OK
-    res.json({ success: true, message: "Message reçu avec succès !" });
-});
-
-// Pages HTML
 app.get('/', (req, res) => res.sendFile(path.resolve(__dirname, 'index.html')));
 app.get('/admin.html', (req, res) => res.sendFile(path.resolve(__dirname, 'admin.html')));
 app.get('/contact.html', (req, res) => res.sendFile(path.resolve(__dirname, 'contact.html')));
