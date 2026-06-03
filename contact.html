@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact | Titidu2505</title>
+    <title>Contact | Tristan</title>
     <style>
         body {
             background-color: #010101;
@@ -99,4 +99,63 @@
         <div class="status-msg" id="status-box"></div>
 
         <form id="contact-form" onsubmit="envoyerMessage(event)">
-            <div class="form
+            <div class="form-group">
+                <label for="name">Nom / Pseudo :</label>
+                <input type="text" id="name" required placeholder="Tristan">
+            </div>
+            <div class="form-group">
+                <label for="email">Adresse Émail :</label>
+                <input type="email" id="email" required placeholder="exemple@mail.com">
+            </div>
+            <div class="form-group">
+                <label for="message">Message :</label>
+                <textarea id="message" rows="5" required placeholder="Écris ton message ici..."></textarea>
+            </div>
+            <button type="submit">Envoyer le message</button>
+        </form>
+
+        <a href="/" class="back-btn">← Retour au menu principal</a>
+    </div>
+
+    <script>
+        async function envoyerMessage(event) {
+            event.preventDefault(); // Empêche la page de se recharger brusquement
+            
+            const statusBox = document.getElementById('status-box');
+            const payload = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                message: document.getElementById('message').value
+            };
+
+            try {
+                const res = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    statusBox.style.display = 'block';
+                    statusBox.style.backgroundColor = '#065f46';
+                    statusBox.style.color = '#34d399';
+                    statusBox.innerText = "✅ Message envoyé directement au serveur !";
+                    
+                    // Vide le formulaire
+                    document.getElementById('contact-form').reset();
+                } else {
+                    throw new Error();
+                }
+            } catch (err) {
+                statusBox.style.display = 'block';
+                statusBox.style.backgroundColor = '#7f1d1d';
+                statusBox.style.color = '#fca5a5';
+                statusBox.innerText = "❌ Erreur lors de l'envoi.";
+            }
+
+            // Cache le message après 4 secondes
+            setTimeout(() => statusBox.style.display = 'none', 4000);
+        }
+    </script>
+</body>
+</html>
