@@ -3,78 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Arbre de Liens TikTok</title>
+    <title>Tristan | Communauté TikTok</title>
     <style>
-        :root { --bg-color: #010101; --text-color: #ffffff; --card-bg: #121212; --accent-color: #fe2c55; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 480px; text-align: center; margin-top: 40px; }
-        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--accent-color); object-fit: cover; margin-bottom: 15px; }
-        .username { font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; }
-        .stats-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 30px; background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid #222; }
-        .stat-box { display: flex; flex-direction: column; align-items: center; }
-        .stat-number { font-size: 1.3rem; font-weight: 800; }
-        .stat-label { font-size: 0.8rem; color: #8a8a8a; margin-top: 4px; }
+        :root { 
+            --bg-color: #010101; 
+            --tiktok-cyan: #00f2fe; 
+            --tiktok-pink: #fe2c55; 
+            --card-bg: #121212; 
+            --text-color: #ffffff; 
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 2rem 1rem; }
+        .container { max-width: 450px; width: 100%; text-align: center; }
+        .avatar-container { position: relative; width: 110px; height: 110px; margin: 0 auto 1.5rem auto; }
+        .avatar { width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink)); padding: 4px; }
+        .avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background-color: #000; }
+        h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.3rem; }
+        .username { color: #a1a1aa; font-size: 1rem; margin-bottom: 1.5rem; display: block; }
+        .stats-box { display: flex; justify-content: space-around; background-color: var(--card-bg); border: 1px solid #27272a; border-radius: 16px; padding: 1rem; margin-bottom: 2rem; }
+        .stat-item span { display: block; }
+        .stat-value { font-weight: 700; font-size: 1.25rem; color: #ffffff; transition: color 0.3s ease; }
+        .stat-label { font-size: 0.85rem; color: #71717a; margin-top: 0.2rem; }
+        .links-container { display: flex; flex-direction: column; gap: 1rem; }
         
-        .links-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
-        .link-card { background-color: var(--card-bg); border: 1px solid #222; padding: 16px; border-radius: 8px; text-decoration: none; color: var(--text-color); font-weight: 600; transition: transform 0.2s, border-color 0.2s; display: block; }
-        .link-card:hover { transform: scale(1.02); border-color: var(--accent-color); }
+        /* Style unique d'origine pour tous les boutons */
+        .tiktok-link { 
+            background-color: var(--card-bg); 
+            border: 1px solid #27272a; 
+            color: white; 
+            text-decoration: none; 
+            padding: 1.1rem; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 0.5rem; 
+            transition: all 0.2s ease; 
+        }
         
-        .update-date { font-size: 0.75rem; color: #444; margin-top: 25px; }
-        .secret-admin-btn { display: inline-block; width: 8px; height: 8px; background-color: #222; border-radius: 50%; text-decoration: none; margin-top: 20px; }
-        .secret-admin-btn:hover { background-color: var(--accent-color); }
+        /* Effet de survol néon rouge vif d'origine */
+        .tiktok-link:hover { 
+            transform: scale(1.02); 
+            background: #ff0055; 
+            border-color: #ff0055;
+            box-shadow: 0 0 15px #ff0055; 
+        }
+
+        footer { margin-top: auto; padding-top: 3rem; font-size: 0.8rem; color: #3f3f46; }
+        .last-update { font-size: 0.75rem; color: #71717a; margin-top: 0.5rem; font-style: italic; }
+
+        /* Le point secret pour aller à la page admin */
+        .secret-admin {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: #111;
+            border-radius: 50%;
+            margin-top: 15px;
+            text-decoration: none;
+        }
+        .secret-admin:hover {
+            background-color: var(--tiktok-cyan);
+        }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <img class="profile-img" src="voila.png" alt="Avatar">
-        <div class="username">@titidu2505</div>
+        <div class="avatar-container"><div class="avatar"><img src="voila.png" alt="Profil"></div></div>
+        <h1>Titidu2505 🌐</h1>
+        <span class="username">@titidu25050</span>
 
-        <div class="stats-container">
-            <div class="stat-box"><span class="stat-number" id="view-followers">--</span><span class="stat-label">Abonnés</span></div>
-            <div class="stat-box"><span class="stat-number" id="view-likes">--</span><span class="stat-label">J'aime</span></div>
-            <div class="stat-box"><span class="stat-number" id="view-domaine">--</span><span class="stat-label">Domaine</span></div>
+        <div class="stats-box">
+            <div class="stat-item"><span class="stat-value" id="view-followers">--</span><span class="stat-label">Suivi</span></div>
+            <div class="stat-item"><span class="stat-value" id="view-likes">--</span><span class="stat-label">Abonné</span></div>
+            <div class="stat-item"><span class="stat-value" id="view-domaine">--</span><span class="stat-label">J'aime</span></div>
         </div>
 
-        <!-- ZONE DES BOUTONS RECONSTRUITE PAR LE SCRIPT -->
-        <div class="links-list" id="affichage-liens"></div>
+        <!-- Les boutons vont s'afficher ici dynamiquement depuis le serveur -->
+        <div class="links-container" id="affichage-liens"></div>
 
-        <div class="update-date" id="view-date">Chargement...</div>
-        <a href="/admin.html" class="secret-admin-btn"></a>
+        <footer>
+            <p>&copy; 2026 - Tristan. Tous droits réservés.</p>
+            <p class="last-update" id="view-date">Connexion au serveur...</p>
+            <!-- Bouton secret cliquable sous le footer -->
+            <a href="/admin.html" class="secret-admin"></a>
+        </footer>
     </div>
 
     <script>
+        let anciennesStats = {};
+
         async function chargerDonnees() {
             try {
-                const reponse = await fetch('/api/data');
-                const data = await reponse.json();
-                
-                // 1. Appliquer les statistiques
+                const response = await fetch('/api/data');
+                const data = await response.json();
+
+                // Gestion de l'effet Flash Cyan si les valeurs changent
+                if (anciennesStats.followers && (anciennesStats.followers !== data.stats.followers || anciennesStats.likes !== data.stats.likes || anciennesStats.domaine !== data.stats.domaine)) {
+                    const valeurs = document.querySelectorAll(".stat-value");
+                    valeurs.forEach(el => el.style.color = "#00f2fe");
+                    setTimeout(() => {
+                        valeurs.forEach(el => el.style.color = "#ffffff");
+                    }, 500);
+                }
+
+                // Appliquer les textes
                 document.getElementById("view-followers").innerText = data.stats.followers;
                 document.getElementById("view-likes").innerText = data.stats.likes;
                 document.getElementById("view-domaine").innerText = data.stats.domaine;
-                document.getElementById("view-date").innerText = "Dernière synchro : " + data.stats.date_sauvegarde;
+                document.getElementById("view-date").innerText = "Dernière sauvegarde : le " + data.stats.date_sauvegarde;
 
-                // 2. Construire dynamiquement les boutons réseaux dans le bon ordre
-                const conteneurLiens = document.getElementById("affichage-liens");
-                conteneurLiens.innerHTML = "";
-                
+                // Sauvegarder l'état pour le prochain test de flash
+                anciennesStats = { ...data.stats };
+
+                // Génération des boutons réseaux
+                const conteneur = document.getElementById("affichage-liens");
+                conteneur.innerHTML = "";
                 data.liens.forEach(lien => {
                     const a = document.createElement('a');
                     a.href = lien.url;
                     a.target = "_blank";
-                    a.className = "link-card";
+                    a.className = "tiktok-link";
                     a.innerText = lien.texte;
-                    conteneurLiens.appendChild(a);
+                    conteneur.appendChild(a);
                 });
 
-            } catch (erreur) {
-                console.error("Erreur de synchronisation globale:", erreur);
+            } catch (err) {
+                console.error("Erreur de synchronisation", err);
             }
         }
 
         document.addEventListener("DOMContentLoaded", chargerDonnees);
-        setInterval(chargerDonnees, 3000); // Rafraîchissement automatique
+        // Rafraîchissement automatique toutes les 2 secondes
+        setInterval(chargerDonnees, 2000);
     </script>
 </body>
 </html>
