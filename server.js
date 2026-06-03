@@ -16,14 +16,9 @@ let stats = {
     date_sauvegarde: "Non modifiée"
 };
 
-// 2. FORCE le serveur à envoyer index.html quand on arrive sur la racine du site
+// Remplace la route app.get('/', ...) par celle-ci :
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Route pour envoyer les stats à la page d'accueil
-app.get('/api/stats', (req, res) => {
-    res.json(stats);
+    res.send("<h1>Le serveur fonctionne mais ne trouve pas le fichier HTML !</h1>");
 });
 
 // Route pour que la page admin mette à jour les stats sur le serveur
