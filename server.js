@@ -13,12 +13,7 @@ let stats = {
     date_sauvegarde: "Non modifiée"
 };
 
-// Route principale (DOIT ÊTRE PLACÉE AVANT LE STATIC)
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Routes API
+// 1. Les routes d'API d'abord
 app.get('/api/stats', (req, res) => {
     res.json(stats);
 });
@@ -33,7 +28,16 @@ app.post('/api/stats', (req, res) => {
     res.json({ message: "OK" });
 });
 
-// En dernier : service des fichiers statiques (CSS, images...)
+// 2. Les routes spécifiques pour tes pages HTML (Chemins absolus forcés)
+app.get('/', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'index.html'));
+});
+
+app.get('/admin.html', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'admin.html'));
+});
+
+// 3. En tout dernier, pour charger le CSS, les images, etc.
 app.use(express.static(__dirname));
 
 app.listen(PORT, () => {
