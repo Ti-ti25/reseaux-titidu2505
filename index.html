@@ -3,16 +3,25 @@
         try {
             const reponse = await fetch('/api/stats');
             const data = await reponse.json();
-            document.getElementById("view-followers").innerText = data.followers;
-            document.getElementById("view-likes").innerText = data.likes;
-            document.getElementById("view-domaine").innerText = data.domaine;
-            document.getElementById("view-date").innerText = "Mis à jour : " + data.date_sauvegarde;
+            
+            // On vérifie si chaque élément existe avant de modifier son texte
+            const elemFollowers = document.getElementById("view-followers");
+            if(elemFollowers) elemFollowers.innerText = data.followers;
+
+            const elemLikes = document.getElementById("view-likes");
+            if(elemLikes) elemLikes.innerText = data.likes;
+
+            const elemDomaine = document.getElementById("view-domaine");
+            if(elemDomaine) elemDomaine.innerText = data.domaine;
+
+            const elemDate = document.getElementById("view-date");
+            if(elemDate) elemDate.innerText = "Mis à jour : " + data.date_sauvegarde;
+
         } catch (erreur) {
             console.error("Erreur serveur:", erreur);
         }
     }
 
     document.addEventListener("DOMContentLoaded", chargerDonneesDuServeur);
-    // Vérifie toutes les 3 secondes si tu as changé un truc dans l'admin
     setInterval(chargerDonneesDuServeur, 3000);
 </script>
