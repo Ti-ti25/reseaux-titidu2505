@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // Définis ton mot de passe secret ici (tu peux le changer)
-const MOT_DE_PASSE_SECRET = "Tristan2026";
+const MOT_DE_PASSE_SECRET = "Titidu25";
 
 // Stockage initial des données avec ton design d'origine
 let donnéesSite = {
