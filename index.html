@@ -15,18 +15,24 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 2rem 1rem; }
         .container { max-width: 450px; width: 100%; text-align: center; }
+        
+        /* Conteneur de l'avatar avec ton effet de cercle dégradé d'origine */
         .avatar-container { position: relative; width: 110px; height: 110px; margin: 0 auto 1.5rem auto; }
         .avatar { width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink)); padding: 4px; }
         .avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background-color: #000; }
+        
         h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.3rem; }
         .username { color: #a1a1aa; font-size: 1rem; margin-bottom: 1.5rem; display: block; }
+        
+        /* Ta boîte de statistiques d'origine */
         .stats-box { display: flex; justify-content: space-around; background-color: var(--card-bg); border: 1px solid #27272a; border-radius: 16px; padding: 1rem; margin-bottom: 2rem; }
         .stat-item span { display: block; }
         .stat-value { font-weight: 700; font-size: 1.25rem; color: #ffffff; transition: color 0.3s ease; }
         .stat-label { font-size: 0.85rem; color: #71717a; margin-top: 0.2rem; }
+        
         .links-container { display: flex; flex-direction: column; gap: 1rem; }
         
-        /* Style unique d'origine pour tous les boutons */
+        /* Style exact de tes boutons d'origine */
         .tiktok-link { 
             background-color: var(--card-bg); 
             border: 1px solid #27272a; 
@@ -42,7 +48,7 @@
             transition: all 0.2s ease; 
         }
         
-        /* Effet de survol néon rouge vif d'origine */
+        /* Ton effet de survol néon rouge d'origine */
         .tiktok-link:hover { 
             transform: scale(1.02); 
             background: #ff0055; 
@@ -53,88 +59,32 @@
         footer { margin-top: auto; padding-top: 3rem; font-size: 0.8rem; color: #3f3f46; }
         .last-update { font-size: 0.75rem; color: #71717a; margin-top: 0.5rem; font-style: italic; }
 
-        /* Le point secret pour aller à la page admin */
-        .secret-admin {
+        /* Le point invisible secret tout en bas pour accéder à l'administration */
+        .secret-admin-dot {
             display: inline-block;
             width: 6px;
             height: 6px;
-            background-color: #111;
+            background-color: #050505; /* Presque noir, invisible sur fond noir */
             border-radius: 50%;
             margin-top: 15px;
             text-decoration: none;
+            cursor: default;
         }
-        .secret-admin:hover {
-            background-color: var(--tiktok-cyan);
+        .secret-admin-dot:hover {
+            background-color: var(--tiktok-cyan); /* Devient bleu cyan si tu passes dessus */
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="avatar-container"><div class="avatar"><img src="voila.png" alt="Profil"></div></div>
-        <h1>Titidu2505 🌐</h1>
+        <div class="avatar-container">
+            <div class="avatar">
+                <img src="voila.png" alt="Profil">
+            </div>
+        </div>
+        
+        <h1>Tristan 🌐</h1>
         <span class="username">@titidu25050</span>
 
         <div class="stats-box">
-            <div class="stat-item"><span class="stat-value" id="view-followers">--</span><span class="stat-label">Suivi</span></div>
-            <div class="stat-item"><span class="stat-value" id="view-likes">--</span><span class="stat-label">Abonné</span></div>
-            <div class="stat-item"><span class="stat-value" id="view-domaine">--</span><span class="stat-label">J'aime</span></div>
-        </div>
-
-        <!-- Les boutons vont s'afficher ici dynamiquement depuis le serveur -->
-        <div class="links-container" id="affichage-liens"></div>
-
-        <footer>
-            <p>&copy; 2026 - Tristan. Tous droits réservés.<a href="admin.html" class="secret-admin-btn"></a></p>
-            <p class="last-update" id="view-date">Aucune sauvegarde détectée</p>
-        </footer>
-    </div>
-
-    <script>
-        let anciennesStats = {};
-
-        async function chargerDonnees() {
-            try {
-                const response = await fetch('/api/data');
-                const data = await response.json();
-
-                // Gestion de l'effet Flash Cyan si les valeurs changent
-                if (anciennesStats.followers && (anciennesStats.followers !== data.stats.followers || anciennesStats.likes !== data.stats.likes || anciennesStats.domaine !== data.stats.domaine)) {
-                    const valeurs = document.querySelectorAll(".stat-value");
-                    valeurs.forEach(el => el.style.color = "#00f2fe");
-                    setTimeout(() => {
-                        valeurs.forEach(el => el.style.color = "#ffffff");
-                    }, 500);
-                }
-
-                // Appliquer les textes
-                document.getElementById("view-followers").innerText = data.stats.followers;
-                document.getElementById("view-likes").innerText = data.stats.likes;
-                document.getElementById("view-domaine").innerText = data.stats.domaine;
-                document.getElementById("view-date").innerText = "Dernière sauvegarde : le " + data.stats.date_sauvegarde;
-
-                // Sauvegarder l'état pour le prochain test de flash
-                anciennesStats = { ...data.stats };
-
-                // Génération des boutons réseaux
-                const conteneur = document.getElementById("affichage-liens");
-                conteneur.innerHTML = "";
-                data.liens.forEach(lien => {
-                    const a = document.createElement('a');
-                    a.href = lien.url;
-                    a.target = "_blank";
-                    a.className = "tiktok-link";
-                    a.innerText = lien.texte;
-                    conteneur.appendChild(a);
-                });
-
-            } catch (err) {
-                console.error("Erreur de synchronisation", err);
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", chargerDonnees);
-        // Rafraîchissement automatique toutes les 2 secondes
-        setInterval(chargerDonnees, 2000);
-    </script>
-</body>
-</html>
+            <div class="stat-item"><span class="stat-value"
