@@ -5,10 +5,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// 1. Dit au serveur de servir tous tes fichiers (CSS, images, JS...)
-app.use(express.static(__dirname));
-
-// Données de base stockées dans la mémoire du serveur Render
+// Données de base
 let stats = {
     followers: "150",
     likes: "10K",
@@ -16,12 +13,16 @@ let stats = {
     date_sauvegarde: "Non modifiée"
 };
 
-// Remplace la route app.get('/', ...) par celle-ci :
+// Route principale (DOIT ÊTRE PLACÉE AVANT LE STATIC)
 app.get('/', (req, res) => {
-    res.send("<h1>Le serveur fonctionne mais ne trouve pas le fichier HTML !</h1>");
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Route pour que la page admin mette à jour les stats sur le serveur
+// Routes API
+app.get('/api/stats', (req, res) => {
+    res.json(stats);
+});
+
 app.post('/api/stats', (req, res) => {
     stats = {
         followers: req.body.followers,
@@ -32,6 +33,9 @@ app.post('/api/stats', (req, res) => {
     res.json({ message: "OK" });
 });
 
+// En dernier : service des fichiers statiques (CSS, images...)
+app.use(express.static(__dirname));
+
 app.listen(PORT, () => {
-    console.log(`Serveur démarré sur le port ${PORT}`);
+    console.log(`Serveur en ligne sur le port ${PORT}`);
 });
