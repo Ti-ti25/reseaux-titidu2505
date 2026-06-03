@@ -5,30 +5,36 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Données de base
-let stats = {
-    followers: "150",
-    likes: "10K",
-    domaine: "150K",
-    date_sauvegarde: "Non modifiée"
+// Stockage temporaire en mémoire
+let donnéesSite = {
+    stats: {
+        followers: "150",
+        likes: "10K",
+        domaine: "150K",
+        date_sauvegarde: "Non modifiée"
+    },
+    liens: [
+        { id: 1, texte: "Mon TikTok", url: "https://www.tiktok.com" },
+        { id: 2, texte: "Mon YouTube", url: "https://www.youtube.com" },
+        { id: 3, texte: "Mon GitHub", url: "https://github.com" }
+    ]
 };
 
-// 1. Les routes d'API d'abord
-app.get('/api/stats', (req, res) => {
-    res.json(stats);
+// Route API unique pour TOUT récupérer d'un coup
+app.get('/api/data', (req, res) => {
+    res.json(donnéesSite);
 });
 
-app.post('/api/stats', (req, res) => {
-    stats = {
-        followers: req.body.followers,
-        likes: req.body.likes,
-        domaine: req.body.domaine,
-        date_sauvegarde: req.body.date_sauvegarde
+// Route API pour TOUT sauvegarder d'un coup (stats + ordre des boutons)
+app.post('/api/data', (req, res) => {
+    donnéesSite = {
+        stats: req.body.stats,
+        liens: req.body.liens
     };
     res.json({ message: "OK" });
 });
 
-// 2. Les routes spécifiques pour tes pages HTML (Chemins absolus forcés)
+// Forcer l'affichage des pages HTML
 app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'index.html'));
 });
@@ -37,7 +43,6 @@ app.get('/admin.html', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'admin.html'));
 });
 
-// 3. En tout dernier, pour charger le CSS, les images, etc.
 app.use(express.static(__dirname));
 
 app.listen(PORT, () => {
