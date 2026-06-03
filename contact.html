@@ -3,99 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tristan | Contact Pro</title>
+    <title>Contact | Titidu2505</title>
     <style>
-        :root { 
-            --bg-color: #010101; 
-            --tiktok-pink: #fe2c55; 
-            --card-bg: #121212; 
-            --text-color: #ffffff; 
+        body {
+            background-color: #010101;
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1rem; }
-        .contact-box { background-color: var(--card-bg); border: 1px solid #27272a; padding: 2.5rem; border-radius: 16px; width: 100%; max-width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        h2 { text-align: center; margin-bottom: 0.5rem; font-size: 1.6rem; }
-        p { text-align: center; color: #a1a1aa; font-size: 0.9rem; margin-bottom: 2rem; }
-        .form-group { margin-bottom: 1.2rem; }
-        label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; color: #a1a1aa; }
-        input[type="text"], input[type="email"], textarea { width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #27272a; background-color: #010101; color: white; font-size: 1rem; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
-        input:focus, textarea:focus { border-color: var(--tiktok-pink); }
-        textarea { resize: vertical; min-height: 120px; }
-        button { width: 100%; padding: 1rem; background-color: var(--card-bg); border: 1px solid #27272a; color: white; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: all 0.2s; margin-top: 1rem; }
-        button:hover { background: var(--tiktok-pink); border-color: var(--tiktok-pink); box-shadow: 0 0 15px var(--tiktok-pink); transform: scale(1.02); }
-        .back-link { display: block; text-align: center; margin-top: 1.5rem; color: #71717a; text-decoration: none; font-size: 0.85rem; }
-        .back-link:hover { color: white; }
+        .contact-container {
+            background-color: #121212;
+            border: 1px solid #27272a;
+            padding: 2.5rem;
+            border-radius: 16px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #fe2c55; /* Rose TikTok d'origine */
+            font-size: 1.8rem;
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            color: #a1a1aa;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #010101;
+            border: 1px solid #27272a;
+            color: white;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            box-sizing: border-box;
+        }
+        input:focus, textarea:focus {
+            border-color: #00f2fe; /* Cyan TikTok au focus */
+        }
+        button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #fe2c55;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+        button:hover {
+            background-color: #ff0055;
+            box-shadow: 0 0 15px #ff0055;
+            transform: scale(1.02);
+        }
+        .back-btn {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #00f2fe;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+        .status-msg {
+            padding: 0.8rem;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 1rem;
+            display: none;
+        }
     </style>
 </head>
 <body>
 
-    <div class="contact-box">
-        <h2>📩 Contactez-moi</h2>
-        <p>Partenariats, demandes professionnelles ou questions.</p>
-        
-        <!-- L'id "contact-form" a été ajouté ici -->
-        <form id="contact-form" action="https://formspree.io/f/meedybol" method="POST">
-            <div class="form-group">
-                <label for="name">Votre Nom / Pseudo :</label>
-                <input type="text" id="name" name="name" required placeholder="Ex: Jean Dupont">
-            </div>
-            
-            <div class="form-group">
-                <label for="email">Votre Adresse E-mail :</label>
-                <input type="email" id="email" name="_replyto" required placeholder="Ex: jean@exemple.com">
-            </div>
+    <div class="contact-container">
+        <h2>Me Contacter 📩</h2>
+        <div class="status-msg" id="status-box"></div>
 
-            <div class="form-group">
-                <label for="subject">Objet du message :</label>
-                <input type="text" id="subject" name="_subject" required placeholder="Ex: Demande de partenariat">
-            </div>
-            
-            <div class="form-group">
-                <label for="message">Votre Message :</label>
-                <textarea id="message" name="message" required placeholder="Écrivez votre message ici..."></textarea>
-            </div>
-            
-            <button type="submit" id="btn-envoyer">Envoyer la demande</button>
-        </form>
-        
-        <a href="index.html" class="back-link">← Retour au profil</a>
-    </div>
-
-    <script>
-        document.getElementById("contact-form").addEventListener("submit", function(event) {
-            // 1. On empêche le rechargement de page par défaut de Formspree
-            event.preventDefault();
-            
-            const bouton = document.getElementById("btn-envoyer");
-            bouton.innerText = "Envoi en cours...";
-            bouton.style.opacity = "0.7";
-
-            // 2. On récupère les données du formulaire
-            const formData = new FormData(this);
-
-            // 3. On envoie les données à Formspree en arrière-plan (AJAX)
-            fetch(this.action, {
-                method: this.method,
-                body: formData,
-                headers: { 'Accept': 'application/json' }
-            })
-            .then(response => {
-                if (response.ok) {
-                    // 4. Si l'envoi réussit, ON FORCE le retour à l'accueil
-                    window.location.href = "index.html";
-                } else {
-                    alert("Une erreur est survenue lors de l'envoi.");
-                    bouton.innerText = "Envoyer la demande";
-                    bouton.style.opacity = "1";
-                }
-            })
-            .catch(error => {
-                alert("Erreur réseau. Vérifiez votre connexion.");
-                bouton.innerText = "Envoyer la demande";
-                bouton.style.opacity = "1";
-            });
-        });
-    </script>
-
-</body>
-</html>
+        <form id="contact-form" onsubmit="envoyerMessage(event)">
+            <div class="form
