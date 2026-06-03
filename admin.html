@@ -3,82 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin Complet</title>
+    <title>Admin Panel | TikTok Stats</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #0b0f19;
-            color: #f3f4f6;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .admin-container {
-            width: 100%;
-            max-width: 500px;
-            background-color: #111827;
-            border: 1px solid #1f2937;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
-        h1, h2 { text-align: center; color: #fe2c55; }
-        h2 { font-size: 1.2rem; border-bottom: 1px solid #374151; padding-bottom: 8px; margin-top: 30px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; }
-        label { font-size: 0.85rem; color: #9ca3af; font-weight: 600; }
-        input { background-color: #1f2937; border: 1px solid #374151; color: white; padding: 10px; border-radius: 8px; outline: none; }
-        input:focus { border-color: #fe2c55; }
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .admin-box { background-color: #1e293b; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 480px; }
+        h2, h3 { text-align: center; margin-bottom: 1.5rem; color: #38bdf8; }
+        h3 { font-size: 1.1rem; margin-top: 1.5rem; border-top: 1px solid #334155; padding-top: 1rem; }
+        .form-group { margin-bottom: 1.2rem; }
+        label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; color: #94a3b8; }
+        input[type="text"] { width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; background-color: #0f172a; color: white; font-size: 1rem; outline: none; }
+        input[type="text"]:focus { border-color: #38bdf8; }
         
-        /* Style de la gestion des boutons */
-        .btn-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #1f2937;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .btn-item input { flex: 1; padding: 6px; font-size: 0.9rem; }
-        .action-btn { background: #374151; border: none; color: white; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .action-btn:hover { background: #4b5563; }
-        .delete-btn { background: #ef4444; }
-        .delete-btn:hover { background: #dc2626; }
+        /* Gestion des boutons créés */
+        .lien-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; background: #0f172a; padding: 8px; border-radius: 6px; }
+        .lien-row input { padding: 6px; font-size: 0.9rem; }
+        .ctrl-btn { background: #334155; border: none; color: white; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .ctrl-btn:hover { background: #475569; }
+        .del-btn { background: #ef4444; }
+        .del-btn:hover { background: #dc2626; }
         
-        .add-btn { background: #25f4ee; color: #000; width: 100%; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .save-btn { background: #fe2c55; color: white; width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 30px; }
-        .back-link { display: block; text-align: center; margin-top: 20px; color: #25f4ee; text-decoration: none; font-size: 0.9rem; }
+        .add-btn { background-color: #10b981; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 1rem; }
+        .add-btn:hover { background-color: #059669; }
+        
+        button.save-btn { width: 100%; padding: 0.8rem; background-color: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
+        button.save-btn:hover { background-color: #1d4ed8; }
+        .msg { background-color: #065f46; color: #34d399; padding: 0.8rem; border-radius: 6px; text-align: center; margin-bottom: 1.5rem; display: none; }
+        .view-link { display: block; text-align: center; margin-top: 1.5rem; color: #94a3b8; text-decoration: none; font-size: 0.85rem; }
     </style>
 </head>
 <body>
-
-    <div class="admin-container">
-        <h1>🛠️ Dashboard Admin</h1>
+    <div class="admin-box">
+        <h2>Modifier mon Site</h2>
+        <div class="msg" id="msg-box"></div>
         
-        <!-- Section 1 : Les Stats -->
-        <h2>1. Modifier les Statistiques</h2>
-        <div class="form-group"><label>Abonnés</label><input type="text" id="followers"></div>
-        <div class="form-group"><label>J'aime</label><input type="text" id="likes"></div>
-        <div class="form-group"><label>Domaine</label><input type="text" id="domaine"></div>
+        <!-- Formulaire Stats -->
+        <div class="form-group">
+            <label for="followers">Nombre d'abonnés (Suivi) :</label>
+            <input type="text" id="followers" required>
+        </div>
+        <div class="form-group">
+            <label for="likes">Nombre de J'aime (Abonné) :</label>
+            <input type="text" id="likes" required>
+        </div>
+        <div class="form-group">
+            <label for="domaine">Thématique (J'aime) :</label>
+            <input type="text" id="domaine" required>
+        </div>
 
-        <!-- Section 2 : Les Liens Dynamiques -->
-        <h2>2. Gestion des Boutons Réseaux</h2>
-        <div id="liste-liens"></div>
-        <button class="add-btn" onclick="ajouterNouveauLien()">➕ Ajouter un bouton</button>
+        <!-- Menu des boutons configurables -->
+        <h3>Gestion des Liens Réseaux</h3>
+        <div id="container-liens"></div>
+        <button class="add-btn" onclick="ajouterLien()">➕ Ajouter un nouveau bouton</button>
 
-        <!-- Bouton Sauvegarde globale -->
-        <button class="save-btn" onclick="sauvegarderTout()">💾 Enregistrer les modifications</button>
-        <div id="status" style="text-align:center; margin-top:15px; font-weight:bold;"></div>
-
-        <a href="/" class="back-link">← Retourner sur le site</a>
+        <button class="save-btn" onclick="sauvegarderDonnees()">Sauvegarder les modifications</button>
+        <a href="/" class="view-link">← Voir ma page TikTok</a>
     </div>
 
     <script>
-        let listeDesLiens = [];
+        let listeLiens = [];
 
-        // Charger l'état actuel depuis le serveur
-        async function chargerDonnees() {
+        async function initialiserAdmin() {
             const res = await fetch('/api/data');
             const data = await res.json();
             
@@ -86,88 +70,70 @@
             document.getElementById('likes').value = data.stats.likes;
             document.getElementById('domaine').value = data.stats.domaine;
             
-            listeDesLiens = data.liens;
-            afficherLaListe();
+            listeLiens = data.liens;
+            dessinerLiens();
         }
 
-        // Rendu de l'interface des liens avec boutons Monter/Descendre/Supprimer
-        function afficherLaListe() {
-            const conteneur = document.getElementById('liste-liens');
-            conteneur.innerHTML = '';
+        function dessinerLiens() {
+            const box = document.getElementById('container-liens');
+            box.innerHTML = '';
             
-            listeDesLiens.forEach((lien, index) => {
+            listeLiens.forEach((l, index) => {
                 const div = document.createElement('div');
-                div.className = 'btn-item';
+                div.className = 'lien-row';
                 div.innerHTML = `
-                    <input type="text" value="${lien.texte}" onchange="mettreAJourLien(${index}, 'texte', this.value)" placeholder="Nom (ex: Instagram)">
-                    <input type="text" value="${lien.url}" onchange="mettreAJourLien(${index}, 'url', this.value)" placeholder="Lien (https://...)">
-                    <button class="action-btn" onclick="deplacer(${index}, -1)">▲</button>
-                    <button class="action-btn" onclick="deplacer(${index}, 1)">▼</button>
-                    <button class="action-btn delete-btn" onclick="supprimerLien(${index})">✕</button>
+                    <input type="text" value="${l.texte}" style="width:35%" onchange="majLien(${index}, 'texte', this.value)" placeholder="Nom">
+                    <input type="text" value="${l.url}" style="width:45%" onchange="majLien(${index}, 'url', this.value)" placeholder="Lien">
+                    <button class="ctrl-btn" onclick="trier(${index}, -1)">▲</button>
+                    <button class="ctrl-btn" onclick="trier(${index}, 1)">▼</button>
+                    <button class="ctrl-btn del-btn" onclick="supprimerLien(${index})">✕</button>
                 `;
-                conteneur.appendChild(div);
+                box.appendChild(div);
             });
         }
 
-        function mettreAJourLien(index, champ, valeur) {
-            listeDesLiens[index][champ] = valeur;
-        }
-
-        function ajouterNouveauLien() {
-            listeDesLiens.push({ id: Date.now(), texte: "Nouveau Lien", url: "https://" });
-            afficherLaListe();
-        }
-
-        function supprimerLien(index) {
-            listeDesLiens.splice(index, 1);
-            afficherLaListe();
-        }
-
-        // Système de déplacement (tri)
-        function deplacer(index, direction) {
+        function majLien(index, cle, val) { listeLiens[index][cle] = val; }
+        function ajouterLien() { listeLiens.push({ texte: "Nouveau Réseau", url: "https://" }); dessinerLiens(); }
+        function supprimerLien(index) { listeLiens.splice(index, 1); dessinerLiens(); }
+        
+        function trier(index, direction) {
             const cible = index + direction;
-            if (cible >= 0 && cible < listeDesLiens.length) {
-                const temp = listeDesLiens[index];
-                listeDesLiens[index] = listeDesLiens[cible];
-                listeDesLiens[cible] = temp;
-                afficherLaListe();
+            if(cible >= 0 && cible < listeLiens.length) {
+                const temp = listeLiens[index];
+                listeLiens[index] = listeLiens[cible];
+                listeLiens[cible] = temp;
+                dessinerLiens();
             }
         }
 
-        // Sauvegarde globale sur le serveur Render
-        async function sauvegarderTout() {
-            const status = document.getElementById('status');
-            status.style.color = "orange";
-            status.innerText = "Sauvegarde...";
-
-            const maintenant = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-
-            const payLoad = {
+        async function sauvegarderDonnees() {
+            const msg = document.getElementById('msg-box');
+            const dateStr = new Date().toLocaleDateString('fr-FR') + " à " + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+            
+            const payload = {
                 stats: {
                     followers: document.getElementById('followers').value,
                     likes: document.getElementById('likes').value,
                     domaine: document.getElementById('domaine').value,
-                    date_sauvegarde: maintenant
+                    date_sauvegarde: dateStr
                 },
-                liens: listeDesLiens
+                liens: listeLiens
             };
 
             const res = await fetch('/api/data', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payLoad)
+                body: JSON.stringify(payload)
             });
 
-            if (res.ok) {
-                status.style.color = "#10b981";
-                status.innerText = "✅ Tout est synchronisé avec succès !";
-            } else {
-                status.style.color = "#ef4444";
-                status.innerText = "❌ Erreur de sauvegarde.";
+            if(res.ok) {
+                msg.style.display = 'block';
+                msg.innerText = "✅ Modifications appliquées en direct !";
+                setTimeout(() => msg.style.display = 'none', 3000);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', chargerDonnees);
+        document.addEventListener('DOMContentLoaded', initialiserAdmin);
     </script>
 </body>
 </html>
