@@ -1,28 +1,192 @@
-<script>
-    // ... Garde ta sécurité mot de passe ici ...
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Console Admin Secrète</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-    document.getElementById("admin-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
+        .admin-card {
+            background-color: #111827;
+            border: 1px solid #1f2937;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: #fe2c55;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            font-weight: 600;
+        }
+
+        input {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: #fe2c55;
+        }
+
+        button {
+            background-color: #fe2c55;
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #e11d48;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #25f4ee;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        #status-message {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-card">
+        <h1>🛠️ Dashboard Admin</h1>
         
-        const maintenant = new Date();
-        const dateFormatee = maintenant.toLocaleDateString('fr-FR') + " à " + maintenant.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+        <form id="stats-form">
+            <div class="form-group">
+                <label for="followers">Nombre d'abonnés (ex: 150 ou 1.2M)</label>
+                <input type="text" id="followers" required placeholder="150">
+            </div>
 
-        const nouvellesStats = {
-            followers: document.getElementById("followers").value,
-            likes: document.getElementById("likes").value,
-            domaine: document.getElementById("domaine").value,
-            date_sauvegarde: dateFormatee
-        };
+            <div class="form-group">
+                <label for="likes">Nombre de J'aime (ex: 10K)</label>
+                <input type="text" id="likes" required placeholder="10K">
+            </div>
 
-        // On envoie les données au serveur Render
-        await fetch('/api/stats', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(nouvellesStats)
+            <div class="form-group">
+                <label for="domaine">Statistique Domaine (ex: 150K)</label>
+                <input type="text" id="domaine" required placeholder="150K">
+            </div>
+
+            <button type="submit">Mettre à jour le site</button>
+        </form>
+
+        <div id="status-message"></div>
+
+        <a href="/" class="back-link">← Retourner sur le site</a>
+    </div>
+
+    <script>
+        // Charger les valeurs actuelles dès l'ouverture de la page admin
+        async function chargerValeursActuelles() {
+            try {
+                const reponse = await fetch('/api/stats');
+                const data = await reponse.json();
+                
+                document.getElementById('followers').value = data.followers;
+                document.getElementById('likes').value = data.likes;
+                document.getElementById('domaine').value = data.domaine;
+            } catch (erreur) {
+                console.error("Impossible de charger les anciennes stats", erreur);
+            }
+        }
+
+        // Envoyer les nouvelles données au serveur lors de la soumission du formulaire
+        document.getElementById('stats-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const msgDiv = document.getElementById('status-message');
+            msgDiv.style.color = "#9ca3af";
+            msgDiv.innerText = "Mise à jour en cours...";
+
+            // Obtenir l'heure actuelle au format français
+            const maintenant = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+            const nouvellesStats = {
+                followers: document.getElementById('followers').value,
+                likes: document.getElementById('likes').value,
+                domaine: document.getElementById('domaine').value,
+                date_sauvegarde: maintenant
+            };
+
+            try {
+                const reponse = await fetch('/api/stats', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(nouvellesStats)
+                });
+
+                if (reponse.ok) {
+                    msgDiv.style.color = "#10b981"; // Vert
+                    msgDiv.innerText = "✅ Données synchronisées avec succès !";
+                } else {
+                    throw new Error("Erreur serveur");
+                }
+            } catch (erreur) {
+                msgDiv.style.color = "#ef4444"; // Rouge
+                msgDiv.innerText = "❌ Erreur de connexion avec le serveur.";
+            }
         });
 
-        const msgBox = document.getElementById("success-msg");
-        msgBox.style.display = "block";
-        setTimeout(() => { msgBox.style.display = "none"; }, 3000);
-    });
-</script>
+        document.addEventListener("DOMContentLoaded", chargerValeursActuelles);
+    </script>
+</body>
+</html>
