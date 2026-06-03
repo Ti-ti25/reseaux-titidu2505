@@ -3,13 +3,12 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Permet au serveur de lire les données JSON envoyées par le JavaScript
 app.use(express.json());
+// Permet de lire les formulaires classiques si besoin
+app.use(express.urlencoded({ extended: true })); 
 
-// 🔐 TON MOT DE PASSE SECRET (Tu peux le modifier ici entre les guillemets)
 const MOT_DE_PASSE_SECRET = "Tristan2026";
 
-// 📦 Stockage initial de tes données (Stats + tes Boutons d'origine)
 let donneesSite = {
     stats: {
         followers: "150",
@@ -25,12 +24,12 @@ let donneesSite = {
     ]
 };
 
-// 🟢 [GET] Route publique pour que l'index récupère les stats et les boutons
+// Route pour l'index
 app.get('/api/stats', (req, res) => {
     res.json(donneesSite);
 });
 
-// 🔵 [POST] Route de connexion pour vérifier le mot de passe de l'admin
+// Connexion Admin
 app.post('/api/login', (req, res) => {
     const { password } = req.body;
     if (password === MOT_DE_PASSE_SECRET) {
@@ -40,35 +39,35 @@ app.post('/api/login', (req, res) => {
     }
 });
 
-// 🔴 [POST] Route sécurisée pour sauvegarder les modifications depuis l'admin
+// Sauvegarde Admin
 app.post('/api/save', (req, res) => {
     const { password, stats, liens } = req.body;
-    
-    // Vérification de sécurité intégrée au serveur
     if (password !== MOT_DE_PASSE_SECRET) {
-        return res.status(403).json({ error: "Accès refusé : Mot de passe invalide." });
+        return res.status(403).json({ error: "Mot de passe invalide." });
     }
-
-    // Mise à jour des données en mémoire
     donneesSite.stats = stats;
     donneesSite.liens = liens;
-    
     res.json({ success: true });
 });
 
-// 📁 Distribution automatique des pages HTML de ton site
-app.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'index.html'));
+// 📩 NOUVELLE ROUTE : Reçoit les messages du formulaire de contact
+app.post('/api/contact', (req, res) => {
+    const { name, email, message } = req.body;
+    
+    // Ici, le serveur reçoit les données. On affiche le message dans la console Render
+    console.log(`📩 Nouveau message de de ${name} (${email}) : ${message}`);
+    
+    // On répond au navigateur que tout est OK
+    res.json({ success: true, message: "Message reçu avec succès !" });
 });
 
-app.get('/admin.html', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'admin.html'));
-});
+// Pages HTML
+app.get('/', (req, res) => res.sendFile(path.resolve(__dirname, 'index.html')));
+app.get('/admin.html', (req, res) => res.sendFile(path.resolve(__dirname, 'admin.html')));
+app.get('/contact.html', (req, res) => res.sendFile(path.resolve(__dirname, 'contact.html')));
 
-// Permet de charger les images (comme voila.png), le CSS ou d'autres fichiers du dossier
 app.use(express.static(__dirname));
 
-// Lancement officiel du serveur sur Render
 app.listen(PORT, () => {
-    console.log(`🚀 Serveur démarré avec succès sur le port ${PORT}`);
+    console.log(`🚀 Serveur en ligne sur le port ${PORT}`);
 });
