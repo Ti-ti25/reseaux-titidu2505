@@ -1,27 +1,148 @@
-<script>
-    async function chargerDonneesDuServeur() {
-        try {
-            const reponse = await fetch('/api/stats');
-            const data = await reponse.json();
-            
-            // On vérifie si chaque élément existe avant de modifier son texte
-            const elemFollowers = document.getElementById("view-followers");
-            if(elemFollowers) elemFollowers.innerText = data.followers;
-
-            const elemLikes = document.getElementById("view-likes");
-            if(elemLikes) elemLikes.innerText = data.likes;
-
-            const elemDomaine = document.getElementById("view-domaine");
-            if(elemDomaine) elemDomaine.innerText = data.domaine;
-
-            const elemDate = document.getElementById("view-date");
-            if(elemDate) elemDate.innerText = "Mis à jour : " + data.date_sauvegarde;
-
-        } catch (erreur) {
-            console.error("Erreur serveur:", erreur);
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Arbre de Liens TikTok</title>
+    <style>
+        :root {
+            --bg-color: #010101;
+            --text-color: #ffffff;
+            --card-bg: #121212;
+            --accent-color: #fe2c55;
+            --secondary-accent: #25f4ee;
         }
-    }
 
-    document.addEventListener("DOMContentLoaded", chargerDonneesDuServeur);
-    setInterval(chargerDonneesDuServeur, 3000);
-</script>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .profile-img {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-color);
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        .username {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        /* Grille des statistiques */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #222;
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-color);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #8a8a8a;
+            margin-top: 4px;
+        }
+
+        /* Liens */
+        .links-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .link-card {
+            background-color: var(--card-bg);
+            border: 1px solid #222;
+            padding: 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            transition: transform 0.2s, border-color 0.2s;
+            display: block;
+        }
+
+        .link-card:hover {
+            transform: scale(1.02);
+            border-color: var(--accent-color);
+        }
+
+        .update-date {
+            font-size: 0.75rem;
+            color: #555;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img class="profile-img" src="https://via.placeholder.com/150" alt="Avatar">
+        <div class="username">@titidu2505</div>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <span class="stat-number" id="view-followers">--</span>
+                <span class="stat-label">Abonnés</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-number" id="view-likes">--</span>
+                <span class="stat-label">J'aime</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-number" id="view-domaine">--</span>
+                <span class="stat-label">Domaine</span>
+            </div>
+        </div>
+
+        <div class="links-list">
+            <a href="#" class="link-card">Mon TikTok</a>
+            <a href="#" class="link-card">Mon YouTube</a>
+            <a href="#" class="link-card">Mon GitHub</a>
+            <a href="/admin.html" class="link-card" style="border-style: dashed;">Espace Admin Secrète</a>
+        </div>
+
+        <div class="update-date" id="view-date">Chargement des données...</div>
+    </div>
+
+    <script>
+        async function chargerDonneesDuServeur() {
+            try {
+                const reponse = await fetch('/api/stats');
+                const data = await reponse.json
