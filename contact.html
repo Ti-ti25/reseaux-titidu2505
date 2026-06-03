@@ -28,7 +28,7 @@
         h2 {
             text-align: center;
             margin-bottom: 1.5rem;
-            color: #fe2c55; /* Rose TikTok d'origine */
+            color: #fe2c55; /* Rose TikTok */
             font-size: 1.8rem;
         }
         .form-group {
@@ -98,18 +98,18 @@
         <h2>Me Contacter 📩</h2>
         <div class="status-msg" id="status-box"></div>
 
-        <form id="contact-form" onsubmit="envoyerMessage(event)">
+        <form id="contact-form" action="https://formspree.io/f/xeewjnnr" method="POST" onsubmit="envoyerFormspree(event)">
             <div class="form-group">
                 <label for="name">Nom / Pseudo :</label>
-                <input type="text" id="name" required placeholder="Tristan">
+                <input type="text" id="name" name="name" required placeholder="Titidu2505">
             </div>
             <div class="form-group">
                 <label for="email">Adresse Émail :</label>
-                <input type="email" id="email" required placeholder="exemple@mail.com">
+                <input type="email" id="email" name="email" required placeholder="exemple@mail.com">
             </div>
             <div class="form-group">
                 <label for="message">Message :</label>
-                <textarea id="message" rows="5" required placeholder="Écris ton message ici..."></textarea>
+                <textarea id="message" name="message" rows="5" required placeholder="Écris ton message ici..."></textarea>
             </div>
             <button type="submit">Envoyer le message</button>
         </form>
@@ -118,42 +118,36 @@
     </div>
 
     <script>
-        async function envoyerMessage(event) {
-            event.preventDefault(); // Empêche la page de se recharger brusquement
+        async function envoyerFormspree(event) {
+            event.preventDefault(); // Empêche Formspree de recharger et de quitter ton site
             
+            const form = event.target;
             const statusBox = document.getElementById('status-box');
-            const payload = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                message: document.getElementById('message').value
-            };
+            const data = new FormData(form);
 
             try {
-                const res = await fetch('/api/contact', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: data,
+                    headers: { 'Accept': 'application/json' }
                 });
 
-                if (res.ok) {
+                if (response.ok) {
                     statusBox.style.display = 'block';
                     statusBox.style.backgroundColor = '#065f46';
                     statusBox.style.color = '#34d399';
-                    statusBox.innerText = "✅ Message envoyé directement au serveur !";
-                    
-                    // Vide le formulaire
-                    document.getElementById('contact-form').reset();
+                    statusBox.innerText = "✅ Message envoyé sur ton Formspree !";
+                    form.reset(); // Vide les champs
                 } else {
                     throw new Error();
                 }
-            } catch (err) {
+            } catch (error) {
                 statusBox.style.display = 'block';
                 statusBox.style.backgroundColor = '#7f1d1d';
                 statusBox.style.color = '#fca5a5';
-                statusBox.innerText = "❌ Erreur lors de l'envoi.";
+                statusBox.innerText = "❌ Une erreur est survenue lors de l'envoi.";
             }
 
-            // Cache le message après 4 secondes
             setTimeout(() => statusBox.style.display = 'none', 4000);
         }
     </script>
