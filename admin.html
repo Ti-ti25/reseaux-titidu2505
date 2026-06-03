@@ -3,99 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Console d'Administration</title>
+    <title>Admin Panel | TikTok Stats</title>
     <style>
-        body { background-color: #0b0b0c; color: #ffffff; font-family: 'Segoe UI', sans-serif; padding: 2rem 1rem; display: flex; flex-direction: column; align-items: center; }
-        .admin-box { background-color: #121214; border: 1px solid #27272a; padding: 2rem; border-radius: 12px; width: 100%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 2rem; }
-        h2, h3 { text-align: center; margin-bottom: 1.5rem; color: #fe2c55; }
-        h3 { margin-top: 1rem; color: #00f2fe; border-top: 1px dashed #27272a; padding-top: 1.5rem; }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; margin-bottom: 0.3rem; font-size: 0.9rem; color: #a1a1aa; }
-        input[type="text"], input[type="password"] { width: 100%; padding: 0.7rem; border-radius: 6px; border: 1px solid #27272a; background-color: #010101; color: white; outline: none; box-sizing: border-box; }
-        input:focus { border-color: #fe2c55; }
-        button { width: 100%; padding: 0.8rem; background-color: #fe2c55; border: none; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem; }
-        button:hover { background-color: #dd1b43; }
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
         
-        /* Gestion des boutons */
-        .btn-add { background-color: #00f2fe; color: #000; }
-        .btn-add:hover { background-color: #00c8d4; }
-        .liste-boutons { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
-        .item-bouton { display: flex; justify-content: space-between; align-items: center; background: #1c1c1e; padding: 0.6rem; border-radius: 6px; border: 1px solid #27272a; font-size: 0.85rem; }
-        .item-info { display: flex; flex-direction: column; max-width: 45%; }
-        .item-url { color: #71717a; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        /* Écran de connexion */
+        .login-box { background-color: #1e293b; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 400px; text-align: center; }
         
-        /* Conteneurs d'actions */
-        .actions-btn { display: flex; gap: 0.3rem; align-items: center; }
-        .order-btns { display: flex; flex-direction: column; gap: 2px; }
+        /* Panneau d'administration principal */
+        .admin-box { background-color: #1e293b; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 480px; display: none; }
         
-        .btn-action { width: auto; padding: 0.4rem 0.6rem; font-size: 0.75rem; margin: 0; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; }
-        .btn-arrow { background-color: #27272a; color: #a1a1aa; padding: 2px 6px; font-size: 0.7rem; }
-        .btn-arrow:hover { background-color: #3f3f46; color: white; }
-        .btn-arrow:disabled { opacity: 0.2; cursor: not-allowed; }
+        h2, h3 { text-align: center; margin-bottom: 1.5rem; color: #38bdf8; }
+        h3 { font-size: 1.1rem; margin-top: 1.5rem; border-top: 1px solid #334155; padding-top: 1rem; }
+        .form-group { margin-bottom: 1.2rem; }
+        label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; color: #94a3b8; }
         
-        .btn-edit { background-color: #ff9500; color: white; }
-        .btn-suppr { background-color: #3a3a3c; color: #ff453a; }
-        .btn-suppr:hover { background-color: #ff453a; color: white; }
+        input { width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; background-color: #0f172a; color: white; font-size: 1rem; outline: none; }
+        input:focus { border-color: #38bdf8; }
         
-        .back-btn { display: block; text-align: center; margin-top: 1.5rem; color: #71717a; text-decoration: none; font-size: 0.9rem; }
-        .back-btn:hover { color: white; }
+        /* Boutons d'action */
+        button { width: 100%; padding: 0.8rem; background-color: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
+        button:hover { background-color: #1d4ed8; }
         
-        /* Verrouillage */
-        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; width: 100%; max-width: 500px; }
-        #admin-content { display: none; width: 100%; max-width: 500px; }
+        /* Rangées de boutons modifiables */
+        .lien-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; background: #0f172a; padding: 8px; border-radius: 6px; }
+        .lien-row input { padding: 6px; font-size: 0.9rem; }
+        .ctrl-btn { background: #334155; border: none; color: white; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; width: auto; margin: 0; }
+        .ctrl-btn:hover { background: #475569; }
+        .del-btn { background: #ef4444; }
+        .del-btn:hover { background: #dc2626; }
+        
+        .add-btn { background-color: #10b981; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 1rem; }
+        .add-btn:hover { background-color: #059669; }
+        
+        .msg { background-color: #065f46; color: #34d399; padding: 0.8rem; border-radius: 6px; text-align: center; margin-bottom: 1.5rem; display: none; }
+        .error-msg { background-color: #7f1d1d; color: #fca5a5; padding: 0.8rem; border-radius: 6px; text-align: center; margin-bottom: 1.5rem; display: none; }
+        .view-link { display: block; text-align: center; margin-top: 1.5rem; color: #94a3b8; text-decoration: none; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
-    <div id="login-screen" class="admin-box">
-        <h2>🔒 Zone Sécurisée</h2>
-        <div class="form-group" style="width: 100%;">
-            <label for="password">Entrez le mot de passe admin :</label>
-            <input type="password" id="password" placeholder="Mot de passe">
+    <!-- ÉCRAN 1 : FORMULAIRE DE CONNEXION -->
+    <div class="login-box" id="login-screen">
+        <h2>Connexion Admin</h2>
+        <div class="error-msg" id="login-error"></div>
+        <div class="form-group">
+            <label for="admin-password">Mot de passe secret :</label>
+            <input type="password" id="admin-password" placeholder="••••••••" style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; background-color: #0f172a; color: white;">
         </div>
-        <button onclick="verifierMotDePasse()">Connexion</button>
-        <a href="index.html" class="back-btn">← Retour</a>
+        <button onclick="verifierMotDePass()">Entrer dans le Panel</button>
+        <a href="/" class="view-link">← Retour au site</a>
     </div>
 
-    <div id="admin-content">
-        <div class="admin-box">
-            <h2>🛠️ Menu Principal Admin</h2>
-            <div class="form-group">
-                <label for="followers">Nombre de Suivis :</label>
-                <input type="text" id="followers" placeholder="Ex: 150">
-            </div>
-            <div class="form-group">
-                <label for="likes">Nombre d'Abonnés :</label>
-                <input type="text" id="likes" placeholder="Ex: 10K">
-            </div>
-            <div class="form-group">
-                <label for="domaine">Nombre de J'aime :</label>
-                <input type="text" id="domaine" placeholder="Ex: 150K">
-            </div>
-            <button onclick="sauvegarderStats()">Enregistrer les Statistiques</button>
-
-            <h3>🔗 Gestion et Ordre des Liens</h3>
-            
-            <input type="hidden" id="edit-index" value="-1">
-
-            <div class="form-group">
-                <label for="new-text">Texte du bouton :</label>
-                <input type="text" id="new-text" placeholder="Ex: 📸 Mon Instagram">
-            </div>
-            <div class="form-group">
-                <label for="new-url">Lien URL :</label>
-                <input type="text" id="new-url" placeholder="Ex: https://instagram.com/pseudo">
-            </div>
-            <button id="btn-submit-bouton" class="btn-add" onclick="validerBouton()">+ Ajouter ce bouton</button>
-
-            <div class="liste-boutons" id="liste-wrapper"></div>
-
-            <a href="index.html" class="back-btn">← Retour au Profil</a>
+    <!-- ÉCRAN 2 : LE TABLEAU DE BORD (Masqué par défaut) -->
+    <div class="admin-box" id="admin-panel">
+        <h2>Modifier mon Site</h2>
+        <div class="msg" id="msg-box"></div>
+        
+        <div class="form-group">
+            <label for="followers">Nombre d'abonnés (Suivi) :</label>
+            <input type="text" id="followers" required>
         </div>
+        <div class="form-group">
+            <label for="likes">Nombre de J'aime (Abonné) :</label>
+            <input type="text" id="likes" required>
+        </div>
+        <div class="form-group">
+            <label for="domaine">Thématique (J'aime) :</label>
+            <input type="text" id="domaine" required>
+        </div>
+
+        <h3>Gestion des Liens Réseaux</h3>
+        <div id="container-liens"></div>
+        <button class="add-btn" onclick="ajouterLien()">➕ Ajouter un nouveau bouton</button>
+
+        <button onclick="sauvegarderDonnees()">Sauvegarder les modifications</button>
+        <a href="/" class="view-link">← Voir ma page TikTok</a>
     </div>
 
     <script>
         let listeLiens = [];
+        let motDePasseSaisi = "";
+
+        async function verifierMotDePass() {
+            const inputPass = document.getElementById('admin-password').value;
+            const errorBox = document.getElementById('login-error');
+
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: inputPass })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                motDePasseSaisi = inputPass;
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                initialiserAdmin();
+            } else {
+                errorBox.innerText = data.message;
+                errorBox.style.display = 'block';
+            }
+        }
 
         async function initialiserAdmin() {
             const res = await fetch('/api/data');
@@ -117,8 +128,8 @@
                 const div = document.createElement('div');
                 div.className = 'lien-row';
                 div.innerHTML = `
-                    <input type="text" value="${l.texte}" style="width:35%" onchange="majLien(${index}, 'texte', this.value)" placeholder="Nom">
-                    <input type="text" value="${l.url}" style="width:45%" onchange="majLien(${index}, 'url', this.value)" placeholder="Lien">
+                    <input type="text" value="${l.texte}" style="width:35%" onchange="majLien(${index}, 'texte', this.value)">
+                    <input type="text" value="${l.url}" style="width:45%" onchange="majLien(${index}, 'url', this.value)">
                     <button class="ctrl-btn" onclick="trier(${index}, -1)">▲</button>
                     <button class="ctrl-btn" onclick="trier(${index}, 1)">▼</button>
                     <button class="ctrl-btn del-btn" onclick="supprimerLien(${index})">✕</button>
@@ -146,6 +157,7 @@
             const dateStr = new Date().toLocaleDateString('fr-FR') + " à " + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
             
             const payload = {
+                password: motDePasseSaisi,
                 stats: {
                     followers: document.getElementById('followers').value,
                     likes: document.getElementById('likes').value,
@@ -167,8 +179,6 @@
                 setTimeout(() => msg.style.display = 'none', 3000);
             }
         }
-
-        document.addEventListener('DOMContentLoaded', initialiserAdmin);
     </script>
 </body>
 </html>
