@@ -5,16 +5,16 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Définis ton mot de passe secret ici (tu peux le changer)
+// Remplace "Tristan2026" par le mot de passe de ton choix
 const MOT_DE_PASSE_SECRET = "Titidu25";
 
-// Stockage initial des données avec ton design d'origine
-let donnéesSite = {
+// Données initiales conformes à tes captures d'écran
+let donneesSite = {
     stats: {
         followers: "150",
         likes: "10K",
         domaine: "150K",
-        date_sauvegarde: "Aucune sauvegarde détectée"
+        date_sauvegarde: "Non modifiée"
     },
     liens: [
         { texte: "🚀 Rejoins mon serveur Discord !", url: "https://discord.com/invite/V4YMKzWYEM" },
@@ -24,12 +24,12 @@ let donnéesSite = {
     ]
 };
 
-// Route pour envoyer les données au site public (sans mot de passe)
-app.get('/api/data', (req, res) => {
-    res.json(donnéesSite);
+// Route API appelée par l'index pour afficher les données
+app.get('/api/stats', (req, res) => {
+    res.json(donneesSite);
 });
 
-// Route de vérification du mot de passe (quand on se connecte au panel)
+// Route de connexion pour l'admin
 app.post('/api/login', (req, res) => {
     const { password } = req.body;
     if (password === MOT_DE_PASSE_SECRET) {
@@ -39,29 +39,20 @@ app.post('/api/login', (req, res) => {
     }
 });
 
-// Route sécurisée pour sauvegarder les modifications
-app.post('/api/data', (req, res) => {
+// Route de sauvegarde sécurisée
+app.post('/api/save', (req, res) => {
     const { password, stats, liens } = req.body;
-    
     if (password !== MOT_DE_PASSE_SECRET) {
-        return res.status(403).json({ error: "Accès refusé : Mot de passe invalide." });
+        return res.status(403).json({ error: "Mot de passe invalide" });
     }
-
-    donnéesSite = { stats, liens };
-    res.json({ message: "OK" });
+    donneesSite.stats = stats;
+    donneesSite.liens = liens;
+    res.json({ success: true });
 });
 
-// Redirection vers les fichiers HTML
-app.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'index.html'));
-});
-
-app.get('/admin.html', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'admin.html'));
-});
-
+// Distribution des fichiers HTML
+app.get('/', (req, res) => res.sendFile(path.resolve(__dirname, 'index.html')));
+app.get('/admin.html', (req, res) => res.sendFile(path.resolve(__dirname, 'admin.html')));
 app.use(express.static(__dirname));
 
-app.listen(PORT, () => {
-    console.log(`Serveur actif sur le port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Serveur en ligne sur le port ${PORT}`));
