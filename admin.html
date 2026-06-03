@@ -6,110 +6,96 @@
     <title>Admin Panel | TikTok Stats</title>
     <style>
         body { background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        
-        /* Écran de connexion */
-        .login-box { background-color: #1e293b; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 400px; text-align: center; }
-        
-        /* Panneau d'administration principal */
-        .admin-box { background-color: #1e293b; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 480px; display: none; }
-        
+        .login-box, .admin-box { background-color: #1e293b; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 460px; }
+        .admin-box { display: none; }
         h2, h3 { text-align: center; margin-bottom: 1.5rem; color: #38bdf8; }
         h3 { font-size: 1.1rem; margin-top: 1.5rem; border-top: 1px solid #334155; padding-top: 1rem; }
         .form-group { margin-bottom: 1.2rem; }
         label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; color: #94a3b8; }
-        
-        input { width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; background-color: #0f172a; color: white; font-size: 1rem; outline: none; }
+        input { width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; background-color: #0f172a; color: white; font-size: 1rem; outline: none; box-sizing: border-box; }
         input:focus { border-color: #38bdf8; }
-        
-        /* Boutons d'action */
         button { width: 100%; padding: 0.8rem; background-color: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
         button:hover { background-color: #1d4ed8; }
         
-        /* Rangées de boutons modifiables */
         .lien-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; background: #0f172a; padding: 8px; border-radius: 6px; }
         .lien-row input { padding: 6px; font-size: 0.9rem; }
         .ctrl-btn { background: #334155; border: none; color: white; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; width: auto; margin: 0; }
         .ctrl-btn:hover { background: #475569; }
         .del-btn { background: #ef4444; }
         .del-btn:hover { background: #dc2626; }
-        
         .add-btn { background-color: #10b981; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 1rem; }
-        .add-btn:hover { background-color: #059669; }
         
-        .msg { background-color: #065f46; color: #34d399; padding: 0.8rem; border-radius: 6px; text-align: center; margin-bottom: 1.5rem; display: none; }
-        .error-msg { background-color: #7f1d1d; color: #fca5a5; padding: 0.8rem; border-radius: 6px; text-align: center; margin-bottom: 1.5rem; display: none; }
+        .msg, .error-msg { padding: 0.8rem; border-radius: 6px; text-align: center; margin-bottom: 1.5rem; display: none; }
+        .msg { background-color: #065f46; color: #34d399; }
+        .error-msg { background-color: #7f1d1d; color: #fca5a5; }
         .view-link { display: block; text-align: center; margin-top: 1.5rem; color: #94a3b8; text-decoration: none; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
-    <!-- ÉCRAN 1 : FORMULAIRE DE CONNEXION -->
     <div class="login-box" id="login-screen">
-        <h2>Connexion Admin</h2>
+        <h2>Connexion Secrète</h2>
         <div class="error-msg" id="login-error"></div>
         <div class="form-group">
-            <label for="admin-password">Mot de passe secret :</label>
-            <input type="password" id="admin-password" placeholder="••••••••" style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; background-color: #0f172a; color: white;">
+            <label>Mot de passe :</label>
+            <input type="password" id="admin-password" placeholder="••••••••">
         </div>
-        <button onclick="verifierMotDePass()">Entrer dans le Panel</button>
-        <a href="/" class="view-link">← Retour au site</a>
+        <button onclick="authentifier()">Entrer</button>
     </div>
 
-    <!-- ÉCRAN 2 : LE TABLEAU DE BORD (Masqué par défaut) -->
     <div class="admin-box" id="admin-panel">
-        <h2>Modifier mon Site</h2>
+        <h2>Modifier mes Stats</h2>
         <div class="msg" id="msg-box"></div>
         
         <div class="form-group">
-            <label for="followers">Nombre d'abonnés (Suivi) :</label>
+            <label>Nombre d'abonnés (Suivi) :</label>
             <input type="text" id="followers" required>
         </div>
         <div class="form-group">
-            <label for="likes">Nombre de J'aime (Abonné) :</label>
+            <label>Nombre de J'aime (Abonné) :</label>
             <input type="text" id="likes" required>
         </div>
         <div class="form-group">
-            <label for="domaine">Thématique (J'aime) :</label>
+            <label>Thématique (J'aime) :</label>
             <input type="text" id="domaine" required>
         </div>
 
-        <h3>Gestion des Liens Réseaux</h3>
+        <h3>Configuration des Boutons</h3>
         <div id="container-liens"></div>
-        <button class="add-btn" onclick="ajouterLien()">➕ Ajouter un nouveau bouton</button>
+        <button class="add-btn" onclick="ajouterNouveauLien()">➕ Ajouter un bouton</button>
 
-        <button onclick="sauvegarderDonnees()">Sauvegarder les modifications</button>
-        <a href="/" class="view-link">← Voir ma page TikTok</a>
+        <button onclick="sauvegarderTout()">Enregistrer les modifications</button>
+        <a href="/" class="view-link">← Retourner sur le site</a>
     </div>
 
     <script>
         let listeLiens = [];
-        let motDePasseSaisi = "";
+        let cleSession = "";
 
-        async function verifierMotDePass() {
-            const inputPass = document.getElementById('admin-password').value;
-            const errorBox = document.getElementById('login-error');
+        async function authentifier() {
+            const pass = document.getElementById('admin-password').value;
+            const errBox = document.getElementById('login-error');
 
             const res = await fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password: inputPass })
+                body: JSON.stringify({ password: pass })
             });
 
             const data = await res.json();
-
             if (data.success) {
-                motDePasseSaisi = inputPass;
+                cleSession = pass;
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
-                initialiserAdmin();
+                recupererDonneesAdmin();
             } else {
-                errorBox.innerText = data.message;
-                errorBox.style.display = 'block';
+                errBox.innerText = data.message;
+                errBox.style.display = 'block';
             }
         }
 
-        async function initialiserAdmin() {
-            const res = await fetch('/api/data');
+        async function recupererDonneesAdmin() {
+            const res = await fetch('/api/stats');
             const data = await res.json();
             
             document.getElementById('followers').value = data.stats.followers;
@@ -117,65 +103,64 @@
             document.getElementById('domaine').value = data.stats.domaine;
             
             listeLiens = data.liens;
-            dessinerLiens();
+            genererListeAjustable();
         }
 
-        function dessinerLiens() {
+        function genererListeAjustable() {
             const box = document.getElementById('container-liens');
             box.innerHTML = '';
-            
             listeLiens.forEach((l, index) => {
                 const div = document.createElement('div');
                 div.className = 'lien-row';
                 div.innerHTML = `
-                    <input type="text" value="${l.texte}" style="width:35%" onchange="majLien(${index}, 'texte', this.value)">
-                    <input type="text" value="${l.url}" style="width:45%" onchange="majLien(${index}, 'url', this.value)">
-                    <button class="ctrl-btn" onclick="trier(${index}, -1)">▲</button>
-                    <button class="ctrl-btn" onclick="trier(${index}, 1)">▼</button>
-                    <button class="ctrl-btn del-btn" onclick="supprimerLien(${index})">✕</button>
+                    <input type="text" value="${l.texte}" style="width:40%" onchange="modifierChamp(${index}, 'texte', this.value)">
+                    <input type="text" value="${l.url}" style="width:40%" onchange="modifierChamp(${index}, 'url', this.value)">
+                    <button class="ctrl-btn" onclick="ordonner(${index}, -1)">▲</button>
+                    <button class="ctrl-btn" onclick="ordonner(${index}, 1)">▼</button>
+                    <button class="ctrl-btn del-btn" onclick="supprimer(${index})">✕</button>
                 `;
                 box.appendChild(div);
             });
         }
 
-        function majLien(index, cle, val) { listeLiens[index][cle] = val; }
-        function ajouterLien() { listeLiens.push({ texte: "Nouveau Réseau", url: "https://" }); dessinerLiens(); }
-        function supprimerLien(index) { listeLiens.splice(index, 1); dessinerLiens(); }
-        
-        function trier(index, direction) {
-            const cible = index + direction;
-            if(cible >= 0 && cible < listeLiens.length) {
+        function modifierChamp(i, k, v) { listeLiens[i][k] = v; }
+        function ajouterNouveauLien() { listeLiens.push({ texte: "Nouveau Lien", url: "https://" }); genererListeAjustable(); }
+        function supprimer(i) { listeLiens.splice(i, 1); genererListeAjustable(); }
+
+        function ordonner(index, direction) {
+            const dest = index + direction;
+            if (dest >= 0 && dest < listeLiens.length) {
                 const temp = listeLiens[index];
-                listeLiens[index] = listeLiens[cible];
-                listeLiens[cible] = temp;
-                dessinerLiens();
+                listeLiens[index] = listeLiens[dest];
+                listeLiens[dest] = temp;
+                genererListeAjustable();
             }
         }
 
-        async function sauvegarderDonnees() {
+        async function sauvegarderTout() {
             const msg = document.getElementById('msg-box');
-            const dateStr = new Date().toLocaleDateString('fr-FR') + " à " + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+            const temps = new Date().toLocaleDateString('fr-FR') + " à " + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
             
             const payload = {
-                password: motDePasseSaisi,
+                password: cleSession,
                 stats: {
                     followers: document.getElementById('followers').value,
                     likes: document.getElementById('likes').value,
                     domaine: document.getElementById('domaine').value,
-                    date_sauvegarde: dateStr
+                    date_sauvegarde: temps
                 },
                 liens: listeLiens
             };
 
-            const res = await fetch('/api/data', {
+            const res = await fetch('/api/save', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
-            if(res.ok) {
+            if (res.ok) {
                 msg.style.display = 'block';
-                msg.innerText = "✅ Modifications appliquées en direct !";
+                msg.innerText = "✅ Synchronisation réussie !";
                 setTimeout(() => msg.style.display = 'none', 3000);
             }
         }
