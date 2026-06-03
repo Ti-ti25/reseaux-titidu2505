@@ -105,12 +105,11 @@
                     a.className = "tiktok-link";
                     a.innerText = lien.texte;
 
-                    // CORRECTION ICI : Si c'est un lien vers contact.html, on l'ouvre dans le même onglet (_self)
+                    // Condition stricte pour la page contact
                     if (lien.url.includes("contact.html")) {
-                        a.target = "_self"; 
+                        a.target = "_self"; // Ouvre dans le MÊME onglet
                     } else {
-                        // Sinon (Discord, YouTube, Insta...), on ouvre un nouvel onglet
-                        a.target = "_blank"; 
+                        a.target = "_blank"; // Ouvre dans un NOUVEL onglet
                     }
 
                     conteneur.appendChild(a);
