@@ -41,6 +41,24 @@
             transition: all 0.2s ease; 
         }
         
+
+                /* Rend la carte admin totalement invisible */
+        .ig-card.admin-hidden {
+            background-color: #000000 !important; /* Met le noir exact de ton fond d'écran */
+            border: 1px solid #000000 !important;  /* Masque la bordure */
+            box-shadow: none !important;           /* Enlève l'ombre portée */
+            cursor: default;                       /* Le curseur ne se transforme pas en main au survol */
+            transition: none !important;           /* Désactive les animations */
+        }
+        
+        /* Bloque les effets visuels au survol pour que personne ne se doute de rien */
+        .ig-card.admin-hidden:hover {
+            transform: none !important;
+            border-color: #000000 !important;
+            box-shadow: none !important;
+            background-color: #000000 !important;
+        }
+                
         .tiktok-link:hover { 
             transform: scale(1.02); 
             background: #ff0055; 
@@ -72,7 +90,7 @@
         <footer>
             <p>&copy; 2026 - Titidu2505. Tous droits réservés.</p>
             <p class="last-update" id="view-date">Chargement...</p>
-            <a href="/admin.html" class="secret-dot"></a>
+            <a href="/admin.html" class="ig-card admin-hidden"></a>
         </footer>
     </div>
 
