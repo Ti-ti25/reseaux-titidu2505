@@ -99,7 +99,7 @@ app.post('/api/save', async (req, res) => {
 app.get('/', (req, res) => res.sendFile(path.resolve(__dirname, 'index.html')));
 app.get('/admin.html', (req, res) => res.sendFile(path.resolve(__dirname, 'admin.html')));
 app.get('/contact.html', (req, res) => res.sendFile(path.resolve(__dirname, 'contact.html')));
-app.get('/le_voila.png', (req, res) => res.sendFile(path.resolve(__dirname, 'le_voila.png')));
+app.get('/voila.png', (req, res) => res.sendFile(path.resolve(__dirname, 'voila.png')));
 
 // Si tu as des images ou une photo de profil (comme ton avatar de voiture) :
 // Optionnel : s'ils sont dans un dossier appelé "images" ou "assets", décommente la ligne en dessous
