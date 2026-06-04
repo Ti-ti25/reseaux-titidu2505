@@ -1,136 +1,105 @@
 const express = require('express');
 const path = require('path');
-const { Pool } = require('pg'); // On garde l'outil de base de données pour Discord
+const { Client } = require('pg'); // Module pour se connecter à PostgreSQL
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Distribue tous tes fichiers (index.html, admin.html, warns.html, images...)
+// 🔐 TON MOT DE PASSE SECRET
+const MOT_DE_PASSE_SECRET = "Tristan2026";
+
+// 🔌 CONNEXION À LA BASE DE DONNÉES RENDER
+// Remplace la ligne ci-dessous par ton "Internal Database URL" que tu as copié à l'étape 1 !
+const DATABASE_URL = process.env.DATABASE_URL || "METS_TON_INTERNAL_DATABASE_URL_ICI";
+
+const client = new Client({
+    connectionString: DATABASE_URL,
+    ssl: { rejectUnauthorized: false } // Obligatoire pour la sécurité sur Render
+});
+
+// Valeurs par défaut si la base de données est totalement vide au premier démarrage
+let donneesSite = {
+    stats: { followers: "150", likes: "10K", domaine: "150K", date_sauvegarde: "Non modifiée" },
+    liens: [
+        { texte: "🚀 Rejoins mon serveur Discord !", url: "https://discord.com/invite/V4YMKzWYEM" },
+        { texte: "🔥 Mes jeux moins chers sur Instant Gaming", url: "https://www.instant-gaming.com/" },
+        { texte: "🎬 Mon compte TikTok principal", url: "https://www.tiktok.com/@titidu25050" },
+        { texte: "📺 Ma chaîne YouTube", url: "https://youtube.com/" },
+        { texte: "📸 Mon Instagram", url: "https://instagram.com/" },
+        { texte: "📩 Contact", url: "/contact.html" }
+    ]
+};
+
+// Connexion et initialisation de la base de données
+client.connect()
+    .then(async () => {
+        console.log("🔌 Connecté avec succès à la base de données PostgreSQL !");
+        
+        // Crée la table de stockage si elle n'existe pas encore
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS configuration (
+                id SERIAL PRIMARY KEY,
+                donnees JSONB
+            )
+        `);
+
+        // Essaie de charger les données existantes
+        const res = await client.query('SELECT donnees FROM configuration ORDER BY id DESC LIMIT 1');
+        if (res.rows.length > 0) {
+            donneesSite = res.rows[0].donnees;
+            console.log("💾 Données permanentes chargées depuis la base de données !");
+        } else {
+            // Si la base est toute neuve, on insère les valeurs par défaut
+            await client.query('INSERT INTO configuration (donnees) VALUES ($1)', [donneesSite]);
+            console.log("📦 Base de données initialisée avec les valeurs par défaut.");
+        }
+    })
+    .catch(err => console.error("❌ Erreur de connexion à la base de données :", err));
+
+// Route pour envoyer les données au site public
+app.get('/api/stats', (req, res) => {
+    res.json(donneesSite);
+});
+
+// Route de connexion pour l'admin
+app.post('/api/login', (req, res) => {
+    const { password } = req.body;
+    if (password === MOT_DE_PASSE_SECRET) {
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ success: false, message: "Mot de passe incorrect !" });
+    }
+});
+
+// Route pour sauvegarder les boutons et les stats dans la BASE DE DONNÉES
+app.post('/api/save', async (req, res) => {
+    const { password, stats, liens } = req.body;
+    if (password !== MOT_DE_PASSE_SECRET) {
+        return res.status(403).json({ error: "Mot de passe invalide." });
+    }
+    
+    donneesSite.stats = stats;
+    donneesSite.liens = liens;
+
+    try {
+        // On met à jour la ligne dans PostgreSQL pour que ce soit enregistré à vie
+        await client.query('UPDATE configuration SET donnees = $1 WHERE id = (SELECT id FROM configuration ORDER BY id DESC LIMIT 1)', [donneesSite]);
+        console.log("📝 Base de données PostgreSQL mise à jour avec succès !");
+        res.json({ success: true });
+    } catch (err) {
+        console.error("Erreur lors de la sauvegarde en base :", err);
+        res.status(500).json({ error: "Erreur serveur lors de la sauvegarde permanente." });
+    }
+});
+
+// Distribution des fichiers HTML
+app.get('/', (req, res) => res.sendFile(path.resolve(__dirname, 'index.html')));
+app.get('/admin.html', (req, res) => res.sendFile(path.resolve(__dirname, 'admin.html')));
+app.get('/contact.html', (req, res) => res.sendFile(path.resolve(__dirname, 'contact.html')));
+
 app.use(express.static(__dirname));
 
-// -------------------------------------------------------------
-// CONFIGURATION DE LA BASE DE DONNÉES RENDER (POUR DISCORD)
-// -------------------------------------------------------------
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-});
-
-// Création automatique des tables Discord (sans toucher à TikTok)
-const initDb = async () => {
-    try {
-        await pool.query(`
-            CREATE TABLE IF NOT EXISTS mutes (
-                id SERIAL PRIMARY KEY,
-                username TEXT NOT NULL,
-                user_id TEXT NOT NULL,
-                reason TEXT NOT NULL,
-                moderator TEXT NOT NULL,
-                duration TEXT NOT NULL,
-                date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-            CREATE TABLE IF NOT EXISTS warns (
-                id SERIAL PRIMARY KEY,
-                username TEXT NOT NULL,
-                user_id TEXT NOT NULL,
-                reason TEXT NOT NULL,
-                moderator TEXT NOT NULL,
-                date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-            CREATE TABLE IF NOT EXISTS bans (
-                id SERIAL PRIMARY KEY,
-                username TEXT NOT NULL,
-                user_id TEXT NOT NULL,
-                reason TEXT NOT NULL,
-                moderator TEXT NOT NULL,
-                date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        `);
-        console.log("Tables de modération Discord prêtes ! 🛡️");
-    } catch (err) {
-        console.error("Erreur base de données :", err);
-    }
-};
-initDb();
-
-// -------------------------------------------------------------
-// PARTIE 1 : TON SITE TIKTOK (REMIS EXACTEMENT COMME AVANT)
-// -------------------------------------------------------------
-let stats = {
-    followers: "150",
-    likes: "10K",
-    domaine: "150K",
-    date_sauvegarde: "Non modifiée"
-};
-
-// Envoie la page TikTok à la racine
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Récupérer les stats TikTok
-app.get('/api/stats', (req, res) => {
-    res.json(stats);
-});
-
-// Modifier les stats TikTok depuis admin.html
-app.post('/api/stats', (req, res) => {
-    stats = {
-        followers: req.body.followers,
-        likes: req.body.likes,
-        domaine: req.body.domaine,
-        date_sauvegarde: req.body.date_sauvegarde
-    };
-    res.json({ message: "OK" });
-});
-
-
-// -------------------------------------------------------------
-// PARTIE 2 : TON PANEL DISCORD (BASE DE DONNÉES SQL)
-// -------------------------------------------------------------
-
-// Récupérer les mutes, warns ou bans
-app.get('/api/sanctions/:type', async (req, res) => {
-    const type = req.params.type;
-    if (!['mutes', 'warns', 'bans'].includes(type)) return res.status(400).json({ error: "Type invalide" });
-
-    try {
-        const result = await pool.query(`SELECT * FROM ${type} ORDER BY date_added DESC`);
-        res.json(result.rows);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Ajouter une sanction depuis ajouter.html
-app.post('/api/sanctions', async (req, res) => {
-    const { type, username, user_id, reason, moderator, duration } = req.body;
-
-    try {
-        if (type === 'mute') {
-            await pool.query(
-                'INSERT INTO mutes (username, user_id, reason, moderator, duration) VALUES ($1, $2, $3, $4, $5)',
-                [username, user_id, reason, moderator, duration || 'Non spécifiée']
-            );
-        } else if (type === 'warn') {
-            await pool.query(
-                'INSERT INTO warns (username, user_id, reason, moderator) VALUES ($1, $2, $3, $4)',
-                [username, user_id, reason, moderator]
-            );
-        } else if (type === 'ban') {
-            await pool.query(
-                'INSERT INTO bans (username, user_id, reason, moderator) VALUES ($1, $2, $3, $4)',
-                [username, user_id, reason, moderator]
-            );
-        }
-        res.json({ success: true, message: "Sanction ajoutée avec succès !" });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
 app.listen(PORT, () => {
-    console.log(`Serveur démarré sur le port ${PORT}`);
+    console.log(`🚀 Serveur pro et permanent connecté sur le port ${PORT}`);
 });
