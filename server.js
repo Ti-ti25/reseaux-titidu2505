@@ -6,12 +6,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// 🔐 TON MOT DE PASSE SECRET
-const MOT_DE_PASSE_SECRET = "Tristan2026";
-
-// 🔌 CONNEXION À LA BASE DE DONNÉES RENDER
-// Remplace la ligne ci-dessous par ton "Internal Database URL" que tu as copié à l'étape 1 !
-const DATABASE_URL = process.env.DATABASE_URL || "METS_TON_INTERNAL_DATABASE_URL_ICI";
+// 🔐 SÉCURITÉ : Récupération des secrets via les variables d'environnement de Render
+// Tu n'as plus besoin de taper ton mot de passe ou ton URL de BDD en dur ici !
+const MOT_DE_PASSE_SECRET = process.env.ADMIN_PASSWORD || "ChangeMoiSurRender123!";
+const DATABASE_URL = process.env.DATABASE_URL;
 
 const client = new Client({
     connectionString: DATABASE_URL,
@@ -32,30 +30,34 @@ let donneesSite = {
 };
 
 // Connexion et initialisation de la base de données
-client.connect()
-    .then(async () => {
-        console.log("🔌 Connecté avec succès à la base de données PostgreSQL !");
-        
-        // Crée la table de stockage si elle n'existe pas encore
-        await client.query(`
-            CREATE TABLE IF NOT EXISTS configuration (
-                id SERIAL PRIMARY KEY,
-                donnees JSONB
-            )
-        `);
+if (DATABASE_URL) {
+    client.connect()
+        .then(async () => {
+            console.log("🔌 Connecté avec succès à la base de données PostgreSQL !");
+            
+            // Crée la table de stockage si elle n'existe pas encore
+            await client.query(`
+                CREATE TABLE IF NOT EXISTS configuration (
+                    id SERIAL PRIMARY KEY,
+                    donnees JSONB
+                )
+            `);
 
-        // Essaie de charger les données existantes
-        const res = await client.query('SELECT donnees FROM configuration ORDER BY id DESC LIMIT 1');
-        if (res.rows.length > 0) {
-            donneesSite = res.rows[0].donnees;
-            console.log("💾 Données permanentes chargées depuis la base de données !");
-        } else {
-            // Si la base est toute neuve, on insère les valeurs par défaut
-            await client.query('INSERT INTO configuration (donnees) VALUES ($1)', [donneesSite]);
-            console.log("📦 Base de données initialisée avec les valeurs par défaut.");
-        }
-    })
-    .catch(err => console.error("❌ Erreur de connexion à la base de données :", err));
+            // Essaie de charger les données existantes
+            const res = await client.query('SELECT donnees FROM configuration ORDER BY id DESC LIMIT 1');
+            if (res.rows.length > 0) {
+                donneesSite = res.rows[0].donnees;
+                console.log("💾 Données permanentes chargées depuis la base de données !");
+            } else {
+                // Si la base est toute neuve, on insère les valeurs par défaut
+                await client.query('INSERT INTO configuration (donnees) VALUES ($1)', [donneesSite]);
+                console.log("📦 Base de données initialisée avec les valeurs par défaut.");
+            }
+        })
+        .catch(err => console.error("❌ Erreur de connexion à la base de données :", err));
+} else {
+    console.warn("⚠️ Attention : DATABASE_URL n'est pas définie dans l'environnement.");
+}
 
 // Route pour envoyer les données au site public
 app.get('/api/stats', (req, res) => {
@@ -83,7 +85,6 @@ app.post('/api/save', async (req, res) => {
     donneesSite.liens = liens;
 
     try {
-        // On met à jour la ligne dans PostgreSQL pour que ce soit enregistré à vie
         await client.query('UPDATE configuration SET donnees = $1 WHERE id = (SELECT id FROM configuration ORDER BY id DESC LIMIT 1)', [donneesSite]);
         console.log("📝 Base de données PostgreSQL mise à jour avec succès !");
         res.json({ success: true });
@@ -93,12 +94,15 @@ app.post('/api/save', async (req, res) => {
     }
 });
 
-// Distribution des fichiers HTML
+// 🛡️ DISTRIBUTION SÉCURISÉE DES FICHIERS
+// On n'expose plus tout le dossier racine. On cible uniquement les fichiers nécessaires.
 app.get('/', (req, res) => res.sendFile(path.resolve(__dirname, 'index.html')));
 app.get('/admin.html', (req, res) => res.sendFile(path.resolve(__dirname, 'admin.html')));
 app.get('/contact.html', (req, res) => res.sendFile(path.resolve(__dirname, 'contact.html')));
 
-app.use(express.static(__dirname));
+// Si tu as des images ou une photo de profil (comme ton avatar de voiture) :
+// Optionnel : s'ils sont dans un dossier appelé "images" ou "assets", décommente la ligne en dessous
+// app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.listen(PORT, () => {
     console.log(`🚀 Serveur pro et permanent connecté sur le port ${PORT}`);
