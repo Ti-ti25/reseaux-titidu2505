@@ -100,7 +100,10 @@ app.get('/', (req, res) => res.sendFile(path.resolve(__dirname, 'index.html')));
 app.get('/admin.html', (req, res) => res.sendFile(path.resolve(__dirname, 'admin.html')));
 app.get('/contact.html', (req, res) => res.sendFile(path.resolve(__dirname, 'contact.html')));
 app.get('/voila.png', (req, res) => res.sendFile(path.resolve(__dirname, 'voila.png')));
-app.get('/podium_fullscreen.html', (req, res) => res.sendFile(path.join(__dirname, 'podium_fullscreen.html')));
+// Permettre l'accès à la page podium_fullscreen.html
+app.get('/podium_fullscreen.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'podium_fullscreen.html'));
+});
 });
 // Si tu as des images ou une photo de profil (comme ton avatar de voiture) :
 // Optionnel : s'ils sont dans un dossier appelé "images" ou "assets", décommente la ligne en dessous
