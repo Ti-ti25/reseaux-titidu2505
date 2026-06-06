@@ -96,17 +96,59 @@ app.post('/api/save', async (req, res) => {
 
 // 🛡️ DISTRIBUTION SÉCURISÉE DES FICHIERS
 // On n'expose plus tout le dossier racine. On cible uniquement les fichiers nécessaires.
+// ==========================================
+// ROUTES DU SITE WEB (Toutes tes pages HTML)
+// ==========================================
 app.get('/', (req, res) => res.sendFile(path.resolve(__dirname, 'index.html')));
 app.get('/admin.html', (req, res) => res.sendFile(path.resolve(__dirname, 'admin.html')));
 app.get('/contact.html', (req, res) => res.sendFile(path.resolve(__dirname, 'contact.html')));
 app.get('/voila.png', (req, res) => res.sendFile(path.resolve(__dirname, 'voila.png')));
-app.get('/podium_fullscreen.html', (req, res) => res.sendFile(path.resolve(__dirname, 'podium_fullscreen.html')));
-});
-});
-// Si tu as des images ou une photo de profil (comme ton avatar de voiture) :
-// Optionnel : s'ils sont dans un dossier appelé "images" ou "assets", décommente la ligne en dessous
-// app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-app.listen(PORT, () => {
-    console.log(`🚀 Serveur pro et permanent connecté sur le port ${PORT}`);
+// Ta nouvelle page podium corrigée et bien fermée !
+app.get('/podium_fullscreen.html', (req, res) => res.sendFile(path.resolve(__dirname, 'podium_fullscreen.html')));
+
+
+// ==========================================
+// ROUTE API (Récupération des sanctions)
+// ==========================================
+app.get('/api/sanctions/:type', async (req, res) => {
+    let type = req.params.type.toLowerCase();
+    if (!type.endsWith('s')) type += 's';
+    try {
+        const result = await pool.query(`SELECT * FROM ${type} ORDER BY date_added DESC`);
+        res.json(result.rows);
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
+});
+
+// ==========================================
+// ROUTE API (Suppression d'une sanction)
+// ==========================================
+app.delete('/api/sanctions/:table/:id', async (req, res) => {
+    const { table, id } = req.params;
+    try {
+        const data = await pool.query(`SELECT user_id FROM ${table} WHERE id = $1`, [id]);
+        if (data.rows.length > 0 && GUILD_ID) {
+            const userId = data.rows[0].user_id;
+            const guild = await client.guilds.fetch(GUILD_ID).catch(() => null);
+            if (guild) {
+                if (table === 'mutes') {
+                    const member = await guild.members.fetch(userId).catch(() => null);
+                    if (member) await member.timeout(null).catch(() => null);
+                } else if (table === 'bans') {
+                    await guild.bans.remove(userId).catch(() => null);
+                }
+            }
+        }
+        await pool.query(`DELETE FROM ${table} WHERE id = $1`, [id]);
+        res.json({ success: true });
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
+});
+
+// Lancement du serveur
+app.listen(PORT, () => { 
+    console.log(`🚀 Serveur actif sur le port ${PORT}`); 
 });
