@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Podium</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #08080f;
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  #scene {
+    width: 1280px;
+    height: 720px;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* BG gradient mesh */
+  #bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 100%, #1a0e2e 0%, transparent 70%),
+      radial-gradient(ellipse 80% 60% at 20% 80%, #0d1a2e 0%, transparent 60%),
+      #08080f;
+  }
+
+  /* Scanlines */
+  #bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(255,255,255,0.015) 3px,
+      rgba(255,255,255,0.015) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* Stars */
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    animation: twinkle var(--dur, 2s) ease-in-out infinite alternate;
+    animation-delay: var(--del, 0s);
+  }
+  @keyframes twinkle {
+    from { opacity: 0.1; transform: scale(0.8); }
+    to { opacity: 0.9; transform: scale(1.2); }
+  }
+
+  /* TITLE */
+  #title {
+    position: absolute;
+    top: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    letter-spacing: 10px;
+    color: #FFD700;
+    text-shadow:
+      0 0 30px #FFD70066,
+      0 0 80px #FFD70033,
+      0 2px 0 #a07800;
+    opacity: 0;
+    animation: fadeInDown 0.8s cubic-bezier(.22,1,.36,1) 0.4s forwards;
+    white-space: nowrap;
+  }
+  #subtitle {
+    position: absolute;
+    top: 112px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    letter-spacing: 6px;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeInDown 0.6s ease 1s forwards;
+    white-space: nowrap;
+  }
+
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* SPOTLIGHTS */
+  .spotlight {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0;
+    transition: opacity 1.2s ease;
+    pointer-events: none;
+  }
+  .sp1 { width: 320px; height: 320px; background: rgba(255,215,0,0.15); left: 430px; top: 200px; }
+  .sp2 { width: 260px; height: 260px; background: rgba(192,192,192,0.10); left: 680px; top: 260px; }
+  .sp3 { width: 240px; height: 240px; background: rgba(205,127,50,0.10); left: 180px; top: 290px; }
+
+  /* PODIUM CONTAINER */
+  .podium-wrap {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .slot { position: relative; display: flex; flex-direction: column; align-items: center; }
+
+  /* BLOCKS */
+  .block {
+    width: 260px;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 18px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    transform: translateY(500px);
+    transition: transform 1.1s cubic-bezier(.22,1,.36,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .block::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+  }
+  .block::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 50%);
+  }
+
+  .p1 {
+    height: 300px;
+    background: linear-gradient(180deg, #c9950a 0%, #7a5c00 100%);
+    color: rgba(255,200,0,0.4);
+    box-shadow: 0 0 60px rgba(255,215,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .p1::before { background: #FFD700; }
+
+  .p2 {
+    height: 220px;
+    background: linear-gradient(180deg, #8a8a8a 0%, #3a3a3a 100%);
+    color: rgba(220,220,220,0.3);
+    box-shadow: 0 0 40px rgba(192,192,192,0.2), inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+  .p2::before { background: #C0C0C0; }
+
+  .p3 {
+    height: 170px;
+    background: linear-gradient(180deg, #8B5e3c 0%, #3d2410 100%);
+    color: rgba(205,127,50,0.3);
+    box-shadow: 0 0 30px rgba(205,127,50,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  .p3::before { background: #CD7F32; }
+
+  /* CARDS */
+  .card {
+    position: absolute;
+    bottom: calc(100% + 18px);
+    left: 50%;
+    transform: translateX(-50%) translateY(30px);
+    opacity: 0;
+    text-align: center;
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.22,1,.36,1);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .card.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .medal { font-size: 42px; display: block; margin-bottom: 10px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
+
+  .handle {
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 17px;
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 100px;
+    padding: 8px 22px;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .p1 .handle { border-color: rgba(255,215,0,0.4); box-shadow: 0 0 20px rgba(255,215,0,0.2); }
+  .p2 .handle { border-color: rgba(192,192,192,0.3); }
+  .p3 .handle { border-color: rgba(205,127,50,0.3); }
+
+  /* FLASH */
+  #flash {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 99;
+    animation: flash 0.4s ease 3.8s forwards;
+  }
+  @keyframes flash {
+    0% { opacity: 0.6; }
+    100% { opacity: 0; }
+  }
+
+  /* BOTTOM BAR */
+  #bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #FFD700, transparent);
+    opacity: 0;
+    animation: fadeIn 1s ease 1s forwards;
+  }
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  /* RANK LABELS inside blocks */
+  .rank-num {
+    position: relative;
+    z-index: 2;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+<div id="scene">
+  <div id="bg"></div>
+  <div id="flash"></div>
+  <div id="bar"></div>
+
+  <div class="spotlight sp1" id="sp1"></div>
+  <div class="spotlight sp2" id="sp2"></div>
+  <div class="spotlight sp3" id="sp3"></div>
+
+  <div id="title">🏆 &nbsp;PODIUM&nbsp; 🏆</div>
+  <div id="subtitle">Félicitations aux gagnants</div>
+
+  <div class="podium-wrap">
+    <!-- 3rd -->
+    <div class="slot">
+      <div class="card" id="c3">
+        <span class="medal">🥉</span>
+        <span class="handle">@larosedessable4</span>
+      </div>
+      <div class="block p3" id="b3"><span class="rank-num">3</span></div>
+    </div>
+
+    <!-- 1st -->
+    <div class="slot">
+      <div class="card" id="c1">
+        <span class="medal">🥇</span>
+        <span class="handle">@ici.cest.paris081</span>
+      </div>
+      <div class="block p1" id="b1"><span class="rank-num">1</span></div>
+    </div>
+
+    <!-- 2nd -->
+    <div class="slot">
+      <div class="card" id="c2">
+        <span class="medal">🥈</span>
+        <span class="handle">@jeanguylarose</span>
+      </div>
+      <div class="block p2" id="b2"><span class="rank-num">2</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Stars
+  const scene = document.getElementById('scene');
+  for (let i = 0; i < 100; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 3 + 0.5;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      --dur:${1.5 + Math.random()*2.5}s;
+      --del:${Math.random()*3}s;
+    `;
+    document.getElementById('bg').appendChild(s);
+  }
+
+  // Animation sequence
+  // 3rd place
+  setTimeout(() => {
+    document.getElementById('b3').style.transform = 'translateY(0)';
+    document.getElementById('sp3').style.opacity = '1';
+  }, 900);
+  setTimeout(() => document.getElementById('c3').classList.add('show'), 1800);
+
+  // 2nd place
+  setTimeout(() => {
+    document.getElementById('b2').style.transform = 'translateY(0)';
+    document.getElementById('sp2').style.opacity = '1';
+  }, 2200);
+  setTimeout(() => document.getElementById('c2').classList.add('show'), 3100);
+
+  // 1st place
+  setTimeout(() => {
+    document.getElementById('b1').style.transform = 'translateY(0)';
+    document.getElementById('sp1').style.opacity = '1';
+  }, 3600);
+  setTimeout(() => {
+    document.getElementById('c1').classList.add('show');
+  }, 4500);
+</script>
+</body>
+</html>
