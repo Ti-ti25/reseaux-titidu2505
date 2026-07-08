@@ -16,7 +16,6 @@
         button { width: 100%; padding: 0.8rem; background-color: #fe2c55; border: none; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem; }
         button:hover { background-color: #dd1b43; }
         
-        /* Gestion des boutons */
         .btn-add { background-color: #00f2fe; color: #000; }
         .btn-add:hover { background-color: #00c8d4; }
         .liste-boutons { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
@@ -24,7 +23,6 @@
         .item-info { display: flex; flex-direction: column; max-width: 45%; }
         .item-url { color: #71717a; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
-        /* Conteneurs d'actions */
         .actions-btn { display: flex; gap: 0.3rem; align-items: center; }
         .order-btns { display: flex; flex-direction: column; gap: 2px; }
         
@@ -40,7 +38,6 @@
         .back-btn { display: block; text-align: center; margin-top: 1.5rem; color: #71717a; text-decoration: none; font-size: 0.9rem; }
         .back-btn:hover { color: white; }
         
-        /* Verrouillage */
         #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; width: 100%; max-width: 500px; }
         #admin-content { display: none; width: 100%; max-width: 500px; }
     </style>
@@ -54,7 +51,7 @@
             <input type="password" id="password" placeholder="Mot de passe">
         </div>
         <button onclick="verifierMotDePasse()">Connexion</button>
-        <a href="index.html" class="back-btn">← Retour</a>
+        <a href="./index.html" class="back-btn">← Retour</a>
     </div>
 
     <div id="admin-content">
@@ -90,7 +87,7 @@
 
             <div class="liste-boutons" id="liste-wrapper"></div>
 
-            <a href="index.html" class="back-btn">← Retour au Profil</a>
+            <a href="./index.html" class="back-btn">← Retour au Profil</a>
         </div>
     </div>
 
