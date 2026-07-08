@@ -51,7 +51,7 @@
             <input type="password" id="password" placeholder="Mot de passe">
         </div>
         <button onclick="verifierMotDePasse()">Connexion</button>
-        <a href="./index.html" class="back-btn">← Retour</a>
+        <a href="./" class="back-btn">← Retour</a>
     </div>
 
     <div id="admin-content">
@@ -87,12 +87,13 @@
 
             <div class="liste-boutons" id="liste-wrapper"></div>
 
-            <a href="./index.html" class="back-btn">← Retour au Profil</a>
+            <a href="./" class="back-btn">← Retour au Profil</a>
         </div>
     </div>
 
     <script>
-        const MOT_DE_PASSE_CORRECT = "1234"; 
+        // Récupération dynamique ou mot de passe de secours si exécuté localement
+        const MOT_DE_PASSE_CORRECT = window._env_?.ADMIN_PASSWORD || "1234"; 
 
         const boutonsParDefaut = [
             { texte: "🚀 Rejoins mon serveur Discord !", url: "https://discord.gg/Uy8nTKuXK6" },
@@ -122,14 +123,9 @@
         }
 
         function sauvegarderStats() {
-            const f = document.getElementById("followers").value;
-            const l = document.getElementById("likes").value;
-            const d = document.getElementById("domaine").value;
-            
-            localStorage.setItem("followers", f);
-            localStorage.setItem("likes", l);
-            localStorage.setItem("domaine", d);
-
+            localStorage.setItem("followers", document.getElementById("followers").value);
+            localStorage.setItem("likes", document.getElementById("likes").value);
+            localStorage.setItem("domaine", document.getElementById("domaine").value);
             alert("Statistiques mises à jour !");
         }
 
@@ -173,7 +169,6 @@
         function deplacerBouton(index, direction) {
             let boutons = JSON.parse(localStorage.getItem("liste_boutons_v2")) || [];
             const cible = index + direction;
-            
             if (cible < 0 || cible >= boutons.length) return;
             
             const temporaire = boutons[index];
@@ -208,7 +203,6 @@
             }
 
             localStorage.setItem("liste_boutons_v2", JSON.stringify(boutons));
-
             document.getElementById("new-text").value = "";
             document.getElementById("new-url").value = "";
             afficherListeBoutons();
@@ -217,7 +211,6 @@
         function chargerPourModifier(index) {
             let boutons = JSON.parse(localStorage.getItem("liste_boutons_v2"));
             const bouton = boutons[index];
-
             document.getElementById("new-text").value = bouton.texte;
             document.getElementById("new-url").value = bouton.url;
             document.getElementById("edit-index").value = index;
@@ -240,7 +233,6 @@
             btnSubmit.style.color = "#000";
             document.getElementById("new-text").value = "";
             document.getElementById("new-url").value = "";
-
             afficherListeBoutons();
         }
     </script>
