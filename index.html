@@ -34,7 +34,7 @@
             flex-direction: column; 
         }
 
-        /* Avatar avec dégradé circulaire comme sur l'image */
+        /* Avatar avec dégradé circulaire */
         .avatar-container { 
             position: relative; 
             width: 130px; 
@@ -101,7 +101,7 @@
         }
         .tooltip-copy.show { opacity: 1; }
 
-        /* Bloc des Statistiques fidèles à la photo */
+        /* Bloc des Statistiques */
         .stats-box { 
             display: flex; 
             justify-content: space-around; 
@@ -179,7 +179,7 @@
 <body>
 
     <div class="container">
-        <!-- Avatar avec l'image voilas.jpg (ou voila.png) -->
+        <!-- Pense à vérifier que ton image s'appelle bien voila.jpg et est dans le même dossier -->
         <div class="avatar-container">
             <div class="avatar">
                 <img src="voila.jpg" alt="Profil">
@@ -211,7 +211,7 @@
             </div>
         </div>
 
-        <!-- Liste des boutons de l'image -->
+        <!-- Liste des boutons -->
         <div class="links-container" id="links-wrapper"></div>
 
         <footer>
@@ -220,7 +220,7 @@
     </div>
 
     <script>
-        // Boutons configurés par défaut exactement comme sur la capture d'écran
+        // Ta liste officielle de boutons par défaut
         const boutonsParDefaut = [
             { texte: "🚀 Rejoins mon serveur Discord !", url: "https://discord.gg/Uy8nTKuXK6" },
             { texte: "🔥 Mon compte TikTok", url: "https://www.tiktok.com/@titidu25050" },
@@ -230,17 +230,18 @@
         ];
 
         function chargerDonnees() {
-            // Permet à l'admin de modifier dynamiquement les compteurs s'ils existent en LocalStorage
+            // Chargement des compteurs depuis le LocalStorage s'ils existent
             if(localStorage.getItem("followers")) {
                 document.getElementById("view-followers").innerText = localStorage.getItem("followers");
                 document.getElementById("view-likes").innerText = localStorage.getItem("likes");
                 document.getElementById("view-domaine").innerText = localStorage.getItem("domaine");
             }
 
-            let boutons = localStorage.getItem("liste_boutons");
+            // Utilisation de liste_boutons_v2 pour écraser le vieux cache du navigateur
+            let boutons = localStorage.getItem("liste_boutons_v2");
             if (!boutons) {
                 boutons = boutonsParDefaut;
-                localStorage.setItem("liste_boutons", JSON.stringify(boutonsParDefaut));
+                localStorage.setItem("liste_boutons_v2", JSON.stringify(boutonsParDefaut));
             } else {
                 boutons = JSON.parse(boutons);
             }
