@@ -61,16 +61,16 @@
         <div class="admin-box">
             <h2>🛠️ Menu Principal Admin</h2>
             <div class="form-group">
-                <label for="followers">Thématique (Ex: GAMING) :</label>
-                <input type="text" id="followers" placeholder="GAMING">
+                <label for="followers">Nombre de Suivis :</label>
+                <input type="text" id="followers" placeholder="Ex: 150">
             </div>
             <div class="form-group">
                 <label for="likes">Nombre d'Abonnés :</label>
-                <input type="text" id="likes" placeholder="1709">
+                <input type="text" id="likes" placeholder="Ex: 10K">
             </div>
             <div class="form-group">
                 <label for="domaine">Nombre de J'aime :</label>
-                <input type="text" id="domaine" placeholder="1136">
+                <input type="text" id="domaine" placeholder="Ex: 150K">
             </div>
             <button onclick="sauvegarderStats()">Enregistrer les Statistiques</button>
 
@@ -97,15 +97,6 @@
     <script>
         const MOT_DE_PASSE_CORRECT = "1234"; 
 
-        // Boutons par défaut synchronisés avec index.html
-        const boutonsParDefaut = [
-            { texte: "🚀 Rejoins mon serveur Discord !", url: "https://discord.gg/Uy8nTKuXK6" },
-            { texte: "🔥 Mon compte TikTok", url: "https://www.tiktok.com/@titidu25050" },
-            { texte: "💻 Configuration PC", url: "https://docs.google.com/document/d/1DFAE_ZSbnvDTvswvucPzSbEtJsL0wUiOP-fUlKaA3vA/edit?usp=sharing" },
-            { texte: "📺 Ma chaîne YouTube", url: "https://www.youtube.com/@titidu-ix7yf" },
-            { texte: "📬 Me Contacter / Partenariats", url: "contact.html" }
-        ];
-
         function verifierMotDePasse() {
             const saisie = document.getElementById("password").value;
             if (saisie === MOT_DE_PASSE_CORRECT) {
@@ -118,10 +109,11 @@
         }
 
         function initialiserAdmin() {
-            document.getElementById("followers").value = localStorage.getItem("followers") || "GAMING";
-            document.getElementById("likes").value = localStorage.getItem("likes") || "1709";
-            document.getElementById("domaine").value = localStorage.getItem("domaine") || "1136";
-            
+            if(localStorage.getItem("followers")) {
+                document.getElementById("followers").value = localStorage.getItem("followers");
+                document.getElementById("likes").value = localStorage.getItem("likes");
+                document.getElementById("domaine").value = localStorage.getItem("domaine");
+            }
             afficherListeBoutons();
         }
 
@@ -142,14 +134,8 @@
         }
 
         function afficherListeBoutons() {
-            // Utilisation de la clé v2 pour correspondre à l'index
-            let boutons = localStorage.getItem("liste_boutons_v2");
-            if (!boutons) {
-                boutons = boutonsParDefaut;
-                localStorage.setItem("liste_boutons_v2", JSON.stringify(boutonsParDefaut));
-            } else {
-                boutons = JSON.parse(boutons);
-            }
+            let boutons = localStorage.getItem("liste_boutons");
+            boutons = boutons ? JSON.parse(boutons) : [];
 
             const wrapper = document.getElementById("liste-wrapper");
             wrapper.innerHTML = "";
@@ -158,6 +144,7 @@
                 const div = document.createElement("div");
                 div.className = "item-bouton";
                 
+                // Désactiver la flèche haut si c'est le premier bouton, flèche bas si c'est le dernier
                 const disableUp = index === 0 ? "disabled" : "";
                 const disableDown = index === boutons.length - 1 ? "disabled" : "";
 
@@ -179,17 +166,25 @@
             });
         }
 
+        // FONCTION POUR COULISSER LES BOUTONS (Haut / Bas)
         function deplacerBouton(index, direction) {
-            let boutons = JSON.parse(localStorage.getItem("liste_boutons_v2")) || [];
+            let boutons = JSON.parse(localStorage.getItem("liste_boutons")) || [];
+            
+            // Calcul de la nouvelle position cible
             const cible = index + direction;
             
+            // Sécurité pour vérifier qu'on ne sort pas du tableau
             if (cible < 0 || cible >= boutons.length) return;
             
+            // Inversion de l'élément actuel avec son voisin du dessus ou du dessous
             const temporaire = boutons[index];
             boutons[index] = boutons[cible];
             boutons[cible] = temporaire;
             
-            localStorage.setItem("liste_boutons_v2", JSON.stringify(boutons));
+            // Sauvegarde de l'ordre tout neuf
+            localStorage.setItem("liste_boutons", JSON.stringify(boutons));
+            
+            // Rafraîchissement visuel de la liste
             afficherListeBoutons();
         }
 
@@ -203,7 +198,7 @@
                 return;
             }
 
-            let boutons = JSON.parse(localStorage.getItem("liste_boutons_v2")) || [];
+            let boutons = JSON.parse(localStorage.getItem("liste_boutons")) || [];
 
             if (editIndex === -1) {
                 boutons.push({ texte: texte, url: url });
@@ -216,7 +211,7 @@
                 btnSubmit.style.color = "#000";
             }
 
-            localStorage.setItem("liste_boutons_v2", JSON.stringify(boutons));
+            localStorage.setItem("liste_boutons", JSON.stringify(boutons));
 
             document.getElementById("new-text").value = "";
             document.getElementById("new-url").value = "";
@@ -224,7 +219,7 @@
         }
 
         function chargerPourModifier(index) {
-            let boutons = JSON.parse(localStorage.getItem("liste_boutons_v2"));
+            let boutons = JSON.parse(localStorage.getItem("liste_boutons"));
             const bouton = boutons[index];
 
             document.getElementById("new-text").value = bouton.texte;
@@ -238,9 +233,9 @@
         }
 
         function supprimerBouton(index) {
-            let boutons = JSON.parse(localStorage.getItem("liste_boutons_v2"));
+            let boutons = JSON.parse(localStorage.getItem("liste_boutons"));
             boutons.splice(index, 1);
-            localStorage.setItem("liste_boutons_v2", JSON.stringify(boutons));
+            localStorage.setItem("liste_boutons", JSON.stringify(boutons));
             
             document.getElementById("edit-index").value = "-1";
             const btnSubmit = document.getElementById("btn-submit-bouton");
