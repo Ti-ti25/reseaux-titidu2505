@@ -34,7 +34,6 @@
             flex-direction: column; 
         }
 
-        /* Avatar avec dégradé circulaire */
         .avatar-container { 
             position: relative; 
             width: 130px; 
@@ -66,7 +65,6 @@
             gap: 0.5rem;
         }
         
-        /* Style du pseudo cliquable */
         .username-container { margin-bottom: 2rem; }
         .username { 
             color: #8e8e93; 
@@ -82,7 +80,6 @@
             background-color: #1c1c1e;
         }
 
-        /* Bulle Copié ! */
         .tooltip-copy {
             position: absolute;
             bottom: -30px;
@@ -101,7 +98,6 @@
         }
         .tooltip-copy.show { opacity: 1; }
 
-        /* Bloc des Statistiques */
         .stats-box { 
             display: flex; 
             justify-content: space-around; 
@@ -129,7 +125,6 @@
             margin-top: 0.3rem; 
         }
 
-        /* Container des Liens */
         .links-container { 
             display: flex; 
             flex-direction: column; 
@@ -167,8 +162,8 @@
         }
         .secret-admin-btn {
             display: inline-block;
-            width: 8px;
-            height: 8px;
+            width: 15px;
+            height: 15px;
             background-color: transparent;
             border-radius: 50%;
             margin-left: 5px;
@@ -179,10 +174,9 @@
 <body>
 
     <div class="container">
-        <!-- Pense à vérifier que ton image s'appelle bien voila.jpg et est dans le même dossier -->
         <div class="avatar-container">
             <div class="avatar">
-                <img src="voila.png" alt="Profil">
+                <img src="voila.jpg" alt="Profil">
             </div>
         </div>
         
@@ -195,7 +189,6 @@
             </span>
         </div>
 
-        <!-- Section Statistiques -->
         <div class="stats-box">
             <div class="stat-item">
                 <span class="stat-value" id="view-followers">GAMING</span>
@@ -211,7 +204,6 @@
             </div>
         </div>
 
-        <!-- Liste des boutons -->
         <div class="links-container" id="links-wrapper"></div>
 
         <footer>
@@ -220,7 +212,6 @@
     </div>
 
     <script>
-        // Ta liste officielle de boutons par défaut
         const boutonsParDefaut = [
             { texte: "🚀 Rejoins mon serveur Discord !", url: "https://discord.gg/Uy8nTKuXK6" },
             { texte: "🔥 Mon compte TikTok", url: "https://www.tiktok.com/@titidu25050" },
@@ -230,14 +221,12 @@
         ];
 
         function chargerDonnees() {
-            // Chargement des compteurs depuis le LocalStorage s'ils existent
             if(localStorage.getItem("followers")) {
                 document.getElementById("view-followers").innerText = localStorage.getItem("followers");
                 document.getElementById("view-likes").innerText = localStorage.getItem("likes");
                 document.getElementById("view-domaine").innerText = localStorage.getItem("domaine");
             }
 
-            // Utilisation de liste_boutons_v2 pour écraser le vieux cache du navigateur
             let boutons = localStorage.getItem("liste_boutons_v2");
             if (!boutons) {
                 boutons = boutonsParDefaut;
@@ -261,7 +250,6 @@
             });
         }
 
-        // Script de copie du pseudo dans le presse-papier
         document.getElementById("copy-username").addEventListener("click", function() {
             const pseudo = "@titidu25050";
             navigator.clipboard.writeText(pseudo).then(() => {
