@@ -3,167 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | TikTok Stats</title>
+    <title>Administration | Titidu2505</title>
     <style>
-        body { background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .login-box, .admin-box { background-color: #1e293b; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 460px; }
-        .admin-box { display: none; }
-        h2, h3 { text-align: center; margin-bottom: 1.5rem; color: #38bdf8; }
-        h3 { font-size: 1.1rem; margin-top: 1.5rem; border-top: 1px solid #334155; padding-top: 1rem; }
-        .form-group { margin-bottom: 1.2rem; }
-        label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; color: #94a3b8; }
-        input { width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; background-color: #0f172a; color: white; font-size: 1rem; outline: none; box-sizing: border-box; }
-        input:focus { border-color: #38bdf8; }
-        button { width: 100%; padding: 0.8rem; background-color: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
-        button:hover { background-color: #1d4ed8; }
+        body {
+            background-color: #1a2436;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+        .admin-container {
+            max-width: 500px;
+            width: 100%;
+            background-color: #121926;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        h2 {
+            text-align: center;
+            color: #29b6f6;
+            margin-bottom: 1.5rem;
+            font-size: 1.6rem;
+        }
+        .section-title {
+            text-align: center;
+            color: #29b6f6;
+            margin: 2rem 0 1rem 0;
+            font-size: 1.4rem;
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #90a4ae;
+            font-size: 0.9rem;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #0d131e;
+            border: 1px solid #233149;
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus {
+            border-color: #29b6f6;
+            outline: none;
+        }
+        .btn-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .btn-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .btn-row input {
+            flex: 1;
+        }
+        .action-btn {
+            padding: 0.6rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 35px;
+        }
+        .btn-up { background-color: #37474f; }
+        .btn-down { background-color: #37474f; }
+        .btn-delete { background-color: #ef5350; }
         
-        .lien-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; background: #0f172a; padding: 8px; border-radius: 6px; }
-        .lien-row input { padding: 6px; font-size: 0.9rem; }
-        .ctrl-btn { background: #334155; border: none; color: white; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; width: auto; margin: 0; }
-        .ctrl-btn:hover { background: #475569; }
-        .del-btn { background: #ef4444; }
-        .del-btn:hover { background: #dc2626; }
-        .add-btn { background-color: #10b981; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 1rem; }
+        .main-btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            margin-top: 1rem;
+            transition: background 0.2s;
+        }
+        .btn-add { background-color: #00c853; }
+        .btn-add:hover { background-color: #00b0ff; }
+        .btn-save { background-color: #2979ff; }
+        .btn-save:hover { background-color: #2962ff; }
         
-        .msg, .error-msg { padding: 0.8rem; border-radius: 6px; text-align: center; margin-bottom: 1.5rem; display: none; }
-        .msg { background-color: #065f46; color: #34d399; }
-        .error-msg { background-color: #7f1d1d; color: #fca5a5; }
-        .view-link { display: block; text-align: center; margin-top: 1.5rem; color: #94a3b8; text-decoration: none; font-size: 0.85rem; }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #90a4ae;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link:hover { color: white; }
     </style>
 </head>
 <body>
 
-    <div class="login-box" id="login-screen">
-        <h2>Connexion Secrète</h2>
-        <div class="error-msg" id="login-error"></div>
-        <div class="form-group">
-            <label>Mot de passe :</label>
-            <input type="password" id="admin-password" placeholder="••••••••">
-        </div>
-        <button onclick="authentifier()">Entrer</button>
-    </div>
-
-    <div class="admin-box" id="admin-panel">
+    <div class="admin-container">
         <h2>Modifier mes Stats</h2>
-        <div class="msg" id="msg-box"></div>
         
         <div class="form-group">
-            <label>Nombre d'abonnés (Suivi) :</label>
-            <input type="text" id="followers" required>
+            <label id="label-followers">Thématique (Ex: GAMING) :</label>
+            <input type="text" id="input-followers" placeholder="GAMING">
         </div>
         <div class="form-group">
-            <label>Nombre de J'aime (Abonné) :</label>
-            <input type="text" id="likes" required>
+            <label id="label-likes">Nombre d'Abonnés :</label>
+            <input type="text" id="input-likes" placeholder="1709">
         </div>
         <div class="form-group">
-            <label>Thématique (J'aime) :</label>
-            <input type="text" id="domaine" required>
+            <label id="label-domaine">Nombre de J'aime :</label>
+            <input type="text" id="input-domaine" placeholder="1136">
         </div>
 
-        <h3>Configuration des Boutons</h3>
-        <div id="container-liens"></div>
-        <button class="add-btn" onclick="ajouterNouveauLien()">➕ Ajouter un bouton</button>
+        <h2 class="section-title">Configuration des Boutons</h2>
+        
+        <div class="btn-list" id="buttons-container">
+            <!-- Les lignes de boutons s'insèrent ici via JS -->
+        </div>
 
-        <button onclick="sauvegarderTout()">Enregistrer les modifications</button>
-        <a href="/" class="view-link">← Retourner sur le site</a>
+        <button class="main-btn btn-add" onclick="ajouterLigneBouton()">➕ Ajouter un bouton</button>
+        <button class="main-btn btn-save" onclick="enregistrerDonnees()">Enregistrer les modifications</button>
+        
+        <a href="index.html" class="back-link">← Retourner sur le site</a>
     </div>
 
     <script>
-        let listeLiens = [];
-        let cleSession = "";
+        // Ta nouvelle configuration par défaut identique à l'index
+        const boutonsParDefaut = [
+            { texte: "🚀 Rejoins mon serveur Discord !", url: "https://discord.gg/Uy8nTKuXK6" },
+            { texte: "🔥 Mon compte TikTok", url: "https://www.tiktok.com/@titidu25050" },
+            { texte: "💻 Configuration PC", url: "https://docs.google.com/document/d/1DFAE_ZSbnvDTvswvucPzSbEtJsL0wUiOP-fUlKaA3vA/edit?usp=sharing" },
+            { texte: "📺 Ma chaîne YouTube", url: "https://www.youtube.com/@titidu-ix7yf" },
+            { texte: "📬 Me Contacter / Partenariats", url: "contact.html" }
+        ];
 
-        async function authentifier() {
-            const pass = document.getElementById('admin-password').value;
-            const errBox = document.getElementById('login-error');
+        function chargerDonneesAdmin() {
+            // Chargement des stats (valeurs par défaut de ton index si vides)
+            document.getElementById("input-followers").value = localStorage.getItem("followers") || "GAMING";
+            document.getElementById("input-likes").value = localStorage.getItem("likes") || "1709";
+            document.getElementById("input-domaine").value = localStorage.getItem("domaine") || "1136";
 
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password: pass })
-            });
-
-            const data = await res.json();
-            if (data.success) {
-                cleSession = pass;
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
-                recupererDonneesAdmin();
+            // Utilisation de la clé synchronisée v2
+            let boutons = localStorage.getItem("liste_boutons_v2");
+            if (!boutons) {
+                boutons = boutonsParDefaut;
             } else {
-                errBox.innerText = data.message;
-                errBox.style.display = 'block';
+                boutons = JSON.parse(boutons);
             }
-        }
 
-        async function recupererDonneesAdmin() {
-            const res = await fetch('/api/stats');
-            const data = await res.json();
-            
-            document.getElementById('followers').value = data.stats.followers;
-            document.getElementById('likes').value = data.stats.likes;
-            document.getElementById('domaine').value = data.stats.domaine;
-            
-            listeLiens = data.liens;
-            genererListeAjustable();
-        }
+            const container = document.getElementById("buttons-container");
+            container.innerHTML = "";
 
-        function genererListeAjustable() {
-            const box = document.getElementById('container-liens');
-            box.innerHTML = '';
-            listeLiens.forEach((l, index) => {
-                const div = document.createElement('div');
-                div.className = 'lien-row';
-                div.innerHTML = `
-                    <input type="text" value="${l.texte}" style="width:40%" onchange="modifierChamp(${index}, 'texte', this.value)">
-                    <input type="text" value="${l.url}" style="width:40%" onchange="modifierChamp(${index}, 'url', this.value)">
-                    <button class="ctrl-btn" onclick="ordonner(${index}, -1)">▲</button>
-                    <button class="ctrl-btn" onclick="ordonner(${index}, 1)">▼</button>
-                    <button class="ctrl-btn del-btn" onclick="supprimer(${index})">✕</button>
-                `;
-                box.appendChild(div);
+            boutons.forEach((bouton, index) => {
+                creerLigneBoutonHTML(bouton.texte, bouton.url);
             });
         }
 
-        function modifierChamp(i, k, v) { listeLiens[i][k] = v; }
-        function ajouterNouveauLien() { listeLiens.push({ texte: "Nouveau Lien", url: "https://" }); genererListeAjustable(); }
-        function supprimer(i) { listeLiens.splice(i, 1); genererListeAjustable(); }
+        function creerLigneBoutonHTML(texte = "", url = "") {
+            const container = document.getElementById("buttons-container");
+            
+            const row = document.createElement("div");
+            row.className = "btn-row";
+            
+            row.innerHTML = `
+                <input type="text" class="btn-texte" placeholder="Texte du bouton" value="${texte}">
+                <input type="text" class="btn-url" placeholder="Lien (URL)" value="${url}">
+                <button class="action-btn btn-up" onclick="deplacerLigne(this, -1)">▲</button>
+                <button class="action-btn btn-down" onclick="deplacerLigne(this, 1)">▼</button>
+                <button class="action-btn btn-delete" onclick="supprimerLigne(this)">❌</button>
+            `;
+            
+            container.appendChild(row);
+        }
 
-        function ordonner(index, direction) {
-            const dest = index + direction;
-            if (dest >= 0 && dest < listeLiens.length) {
-                const temp = listeLiens[index];
-                listeLiens[index] = listeLiens[dest];
-                listeLiens[dest] = temp;
-                genererListeAjustable();
+        function ajouterLigneBouton() {
+            creerLigneBoutonHTML("", "");
+        }
+
+        function supprimerLigne(button) {
+            button.parentElement.remove();
+        }
+
+        function deplacerLigne(button, direction) {
+            const row = button.parentElement;
+            if (direction === -1 && row.previousElementSibling) {
+                row.parentNode.insertBefore(row, row.previousElementSibling);
+            } else if (direction === 1 && row.nextElementSibling) {
+                row.parentNode.insertBefore(row.nextElementSibling, row);
             }
         }
 
-        async function sauvegarderTout() {
-            const msg = document.getElementById('msg-box');
-            const temps = new Date().toLocaleDateString('fr-FR') + " à " + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
-            
-            const payload = {
-                password: cleSession,
-                stats: {
-                    followers: document.getElementById('followers').value,
-                    likes: document.getElementById('likes').value,
-                    domaine: document.getElementById('domaine').value,
-                    date_sauvegarde: temps
-                },
-                liens: listeLiens
-            };
+        function enregistrerDonnees() {
+            // Sauvegarde des 3 blocs de stats
+            localStorage.setItem("followers", document.getElementById("input-followers").value);
+            localStorage.setItem("likes", document.getElementById("input-likes").value);
+            localStorage.setItem("domaine", document.getElementById("input-domaine").value);
 
-            const res = await fetch('/api/save', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+            // Récupération et sauvegarde des boutons dans la clé v2
+            const rows = document.querySelectorAll(".btn-row");
+            const nouvelleListe = [];
+
+            rows.forEach(row => {
+                const texte = row.querySelector(".btn-texte").value;
+                const url = row.querySelector(".btn-url").value;
+                if(texte.trim() !== "" || url.trim() !== "") {
+                    nouvelleListe.push({ texte: texte, url: url });
+                }
             });
 
-            if (res.ok) {
-                msg.style.display = 'block';
-                msg.innerText = "✅ Synchronisation réussie !";
-                setTimeout(() => msg.style.display = 'none', 3000);
-            }
+            localStorage.setItem("liste_boutons_v2", JSON.stringify(nouvelleListe));
+            alert("Modifications enregistrées avec succès !");
         }
+
+        document.addEventListener("DOMContentLoaded", chargerDonneesAdmin);
     </script>
 </body>
 </html>
