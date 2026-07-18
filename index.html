@@ -204,7 +204,15 @@
             </div>
         </div>
 
-        <div class="links-container" id="links-wrapper"></div>
+        <!-- Boutons fixes : gérés directement ici dans le code, jamais perdus -->
+        <div class="links-container" id="links-wrapper">
+            <a href="https://discord.gg/Uy8nTKuXK6" class="tiktok-link" target="_blank">🚀 Rejoins mon serveur Discord !</a>
+            <a href="https://discord.gg/emFH5hZeCm" class="tiktok-link" target="_blank">💼 Rejoins le serveur Agent</a>
+            <a href="https://www.tiktok.com/@titidu25050" class="tiktok-link" target="_blank">🔥 Mon compte TikTok</a>
+            <a href="https://docs.google.com/document/d/1DFAE_ZSbnvDTvswvucPzSbEtJsL0wUiOP-fUlKaA3vA/edit?usp=sharing" class="tiktok-link" target="_blank">💻 Configuration PC</a>
+            <a href="https://www.youtube.com/@titidu-ix7yf" class="tiktok-link" target="_blank">📺 Ma chaîne YouTube</a>
+            <a href="contact.html" class="tiktok-link">📬 Me Contacter / Partenariats</a>
+        </div>
 
         <footer>
             <p>&copy; 2026 - Tristan. Tous droits réservés.<a href="admin.html" class="secret-admin-btn"></a></p>
@@ -212,42 +220,19 @@
     </div>
 
     <script>
-        const boutonsParDefaut = [
-            { texte: "🚀 Rejoins mon serveur Discord !", url: "https://discord.gg/Uy8nTKuXK6" },
-            { texte: "🔥 Mon compte TikTok", url: "https://www.tiktok.com/@titidu25050" },
-            { texte: "💻 Configuration PC", url: "https://docs.google.com/document/d/1DFAE_ZSbnvDTvswvucPzSbEtJsL0wUiOP-fUlKaA3vA/edit?usp=sharing" },
-            { texte: "📺 Ma chaîne YouTube", url: "https://www.youtube.com/@titidu-ix7yf" },
-            { texte: "📬 Me Contacter / Partenariats", url: "contact.html" }
-        ];
-
-        function chargerDonnees() {
-            if(localStorage.getItem("followers")) {
-                document.getElementById("view-followers").innerText = localStorage.getItem("followers");
-                document.getElementById("view-likes").innerText = localStorage.getItem("likes");
-                document.getElementById("view-domaine").innerText = localStorage.getItem("domaine");
+        // Récupère les stats depuis la base de données du serveur.
+        // Si le serveur est indisponible, on garde les valeurs par défaut affichées dans le HTML.
+        async function chargerStats() {
+            try {
+                const res = await fetch('/api/stats');
+                if (!res.ok) return;
+                const stats = await res.json();
+                document.getElementById("view-followers").innerText = stats.followers;
+                document.getElementById("view-likes").innerText = stats.likes;
+                document.getElementById("view-domaine").innerText = stats.domaine;
+            } catch (err) {
+                console.error("Impossible de charger les statistiques :", err);
             }
-
-            let boutons = localStorage.getItem("liste_boutons_v2");
-            if (!boutons) {
-                boutons = boutonsParDefaut;
-                localStorage.setItem("liste_boutons_v2", JSON.stringify(boutonsParDefaut));
-            } else {
-                boutons = JSON.parse(boutons);
-            }
-
-            const wrapper = document.getElementById("links-wrapper");
-            wrapper.innerHTML = "";
-
-            boutons.forEach(bouton => {
-                const a = document.createElement("a");
-                a.href = bouton.url;
-                a.className = "tiktok-link";
-                if(bouton.url.startsWith("http")) {
-                    a.target = "_blank";
-                }
-                a.innerText = bouton.texte;
-                wrapper.appendChild(a);
-            });
         }
 
         document.getElementById("copy-username").addEventListener("click", function() {
@@ -263,8 +248,7 @@
             });
         });
 
-        document.addEventListener("DOMContentLoaded", chargerDonnees);
-        window.addEventListener("storage", chargerDonnees);
+        document.addEventListener("DOMContentLoaded", chargerStats);
     </script>
 </body>
 </html>

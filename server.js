@@ -1,42 +1,82 @@
 const express = require('express');
 const path = require('path');
+const { Pool } = require('pg');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "1234";
 
 app.use(express.json());
-
-// 1. Dit au serveur de servir tous tes fichiers (CSS, images, JS...)
 app.use(express.static(__dirname));
 
-// Données de base stockées dans la mémoire du serveur Render
-let stats = {
-    followers: "150",
-    likes: "10K",
-    domaine: "150K",
-    date_sauvegarde: "Non modifiée"
-};
+// Connexion à la base PostgreSQL de Render
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+});
 
-// 2. FORCE le serveur à envoyer index.html quand on arrive sur la racine du site
+// Crée la table si elle n'existe pas encore, et insère une ligne par défaut
+async function initDatabase() {
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS stats (
+            id INTEGER PRIMARY KEY DEFAULT 1,
+            followers TEXT NOT NULL DEFAULT 'GAMING',
+            likes TEXT NOT NULL DEFAULT '1709',
+            domaine TEXT NOT NULL DEFAULT '1136'
+        );
+    `);
+
+    const result = await pool.query('SELECT * FROM stats WHERE id = 1');
+    if (result.rows.length === 0) {
+        await pool.query(
+            'INSERT INTO stats (id, followers, likes, domaine) VALUES (1, $1, $2, $3)',
+            ['GAMING', '1709', '1136']
+        );
+    }
+}
+
+// Sert index.html sur la racine du site
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Route pour envoyer les stats à la page d'accueil
-app.get('/api/stats', (req, res) => {
-    res.json(stats);
+// Récupère les stats depuis la base (accessible à tous, en lecture seule)
+app.get('/api/stats', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT followers, likes, domaine FROM stats WHERE id = 1');
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Impossible de lire les statistiques." });
+    }
 });
 
-// Route pour que la page admin mette à jour les stats sur le serveur
-app.post('/api/stats', (req, res) => {
-    stats = {
-        followers: req.body.followers,
-        likes: req.body.likes,
-        domaine: req.body.domaine,
-        date_sauvegarde: req.body.date_sauvegarde
-    };
-    res.json({ message: "OK" });
+// Met à jour les stats — protégé par le mot de passe admin
+app.post('/api/stats', async (req, res) => {
+    const { followers, likes, domaine, password } = req.body;
+
+    if (password !== ADMIN_PASSWORD) {
+        return res.status(401).json({ error: "Mot de passe incorrect." });
+    }
+
+    try {
+        await pool.query(
+            'UPDATE stats SET followers = $1, likes = $2, domaine = $3 WHERE id = 1',
+            [followers, likes, domaine]
+        );
+        res.json({ message: "OK" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Impossible de sauvegarder les statistiques." });
+    }
 });
 
-app.listen(PORT, () => {
-    console.log(`Serveur démarré sur le port ${PORT}`);
-});
+initDatabase()
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Serveur démarré sur le port ${PORT}`);
+        });
+    })
+    .catch(err => {
+        console.error("Erreur de connexion à la base de données :", err);
+    });

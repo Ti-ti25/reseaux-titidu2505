@@ -7,36 +7,16 @@
     <style>
         body { background-color: #0b0b0c; color: #ffffff; font-family: 'Segoe UI', sans-serif; padding: 2rem 1rem; display: flex; flex-direction: column; align-items: center; }
         .admin-box { background-color: #121214; border: 1px solid #27272a; padding: 2rem; border-radius: 12px; width: 100%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 2rem; }
-        h2, h3 { text-align: center; margin-bottom: 1.5rem; color: #fe2c55; }
-        h3 { margin-top: 1rem; color: #00f2fe; border-top: 1px dashed #27272a; padding-top: 1.5rem; }
+        h2 { text-align: center; margin-bottom: 1.5rem; color: #fe2c55; }
         .form-group { margin-bottom: 1rem; }
         label { display: block; margin-bottom: 0.3rem; font-size: 0.9rem; color: #a1a1aa; }
         input[type="text"], input[type="password"] { width: 100%; padding: 0.7rem; border-radius: 6px; border: 1px solid #27272a; background-color: #010101; color: white; outline: none; box-sizing: border-box; }
         input:focus { border-color: #fe2c55; }
         button { width: 100%; padding: 0.8rem; background-color: #fe2c55; border: none; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem; }
         button:hover { background-color: #dd1b43; }
-        
-        .btn-add { background-color: #00f2fe; color: #000; }
-        .btn-add:hover { background-color: #00c8d4; }
-        .liste-boutons { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
-        .item-bouton { display: flex; justify-content: space-between; align-items: center; background: #1c1c1e; padding: 0.6rem; border-radius: 6px; border: 1px solid #27272a; font-size: 0.85rem; }
-        .item-info { display: flex; flex-direction: column; max-width: 45%; }
-        .item-url { color: #71717a; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        
-        .actions-btn { display: flex; gap: 0.3rem; align-items: center; }
-        .order-btns { display: flex; flex-direction: column; gap: 2px; }
-        
-        .btn-action { width: auto; padding: 0.4rem 0.6rem; font-size: 0.75rem; margin: 0; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; }
-        .btn-arrow { background-color: #27272a; color: #a1a1aa; padding: 2px 6px; font-size: 0.7rem; }
-        .btn-arrow:hover { background-color: #3f3f46; color: white; }
-        .btn-arrow:disabled { opacity: 0.2; cursor: not-allowed; }
-        
-        .btn-edit { background-color: #ff9500; color: white; }
-        .btn-suppr { background-color: #3a3a3c; color: #ff453a; }
-        .btn-suppr:hover { background-color: #ff453a; color: white; }
-        
         .back-btn { display: block; text-align: center; margin-top: 1.5rem; color: #71717a; text-decoration: none; font-size: 0.9rem; }
         .back-btn:hover { color: white; }
+        .note { font-size: 0.8rem; color: #71717a; text-align: center; margin-top: 1rem; line-height: 1.5; }
         
         #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; width: 100%; max-width: 500px; }
         #admin-content { display: none; width: 100%; max-width: 500px; }
@@ -56,7 +36,7 @@
 
     <div id="admin-content">
         <div class="admin-box">
-            <h2>🛠️ Menu Principal Admin</h2>
+            <h2>🛠️ Statistiques du profil</h2>
             <div class="form-group">
                 <label for="followers">Thématique (Ex: GAMING) :</label>
                 <input type="text" id="followers" placeholder="GAMING">
@@ -71,169 +51,65 @@
             </div>
             <button onclick="sauvegarderStats()">Enregistrer les Statistiques</button>
 
-            <h3>🔗 Gestion et Ordre des Liens</h3>
-            
-            <input type="hidden" id="edit-index" value="-1">
-
-            <div class="form-group">
-                <label for="new-text">Texte du bouton :</label>
-                <input type="text" id="new-text" placeholder="Ex: 📸 Mon Instagram">
-            </div>
-            <div class="form-group">
-                <label for="new-url">Lien URL :</label>
-                <input type="text" id="new-url" placeholder="Ex: https://instagram.com/pseudo">
-            </div>
-            <button id="btn-submit-bouton" class="btn-add" onclick="validerBouton()">+ Ajouter ce bouton</button>
-
-            <div class="liste-boutons" id="liste-wrapper"></div>
+            <p class="note">
+                Les boutons/liens du profil sont désormais fixes dans le code du site
+                (fichier index.html) et ne se gèrent plus depuis cette page — ça évite
+                qu'ils disparaissent en cas de souci avec la base de données.
+            </p>
 
             <a href="./" class="back-btn">← Retour au Profil</a>
         </div>
     </div>
 
     <script>
-        // Récupération dynamique ou mot de passe de secours si exécuté localement
-        const MOT_DE_PASSE_CORRECT = window._env_?.ADMIN_PASSWORD || "1234"; 
-
-        const boutonsParDefaut = [
-            { texte: "🚀 Rejoins mon serveur Discord !", url: "https://discord.gg/Uy8nTKuXK6" },
-            { texte: "🔥 Mon compte TikTok", url: "https://www.tiktok.com/@titidu25050" },
-            { texte: "💻 Configuration PC", url: "https://docs.google.com/document/d/1DFAE_ZSbnvDTvswvucPzSbEtJsL0wUiOP-fUlKaA3vA/edit?usp=sharing" },
-            { texte: "📺 Ma chaîne YouTube", url: "https://www.youtube.com/@titidu-ix7yf" },
-            { texte: "📬 Me Contacter / Partenariats", url: "contact.html" }
-        ];
+        let motDePasseSaisi = "";
 
         function verifierMotDePasse() {
-            const saisie = document.getElementById("password").value;
-            if (saisie === MOT_DE_PASSE_CORRECT) {
-                document.getElementById("login-screen").style.display = "none";
-                document.getElementById("admin-content").style.display = "block";
-                initialiserAdmin();
-            } else {
-                alert("Mot de passe incorrect ❌");
+            motDePasseSaisi = document.getElementById("password").value;
+            // On tente juste de charger les stats : si le mot de passe est faux,
+            // ça sera rejeté au moment de l'enregistrement par le serveur.
+            document.getElementById("login-screen").style.display = "none";
+            document.getElementById("admin-content").style.display = "block";
+            initialiserAdmin();
+        }
+
+        async function initialiserAdmin() {
+            try {
+                const res = await fetch('/api/stats');
+                const stats = await res.json();
+                document.getElementById("followers").value = stats.followers || "";
+                document.getElementById("likes").value = stats.likes || "";
+                document.getElementById("domaine").value = stats.domaine || "";
+            } catch (err) {
+                alert("Impossible de charger les statistiques actuelles depuis le serveur.");
             }
         }
 
-        function initialiserAdmin() {
-            document.getElementById("followers").value = localStorage.getItem("followers") || "GAMING";
-            document.getElementById("likes").value = localStorage.getItem("likes") || "1709";
-            document.getElementById("domaine").value = localStorage.getItem("domaine") || "1136";
-            
-            afficherListeBoutons();
-        }
+        async function sauvegarderStats() {
+            const followers = document.getElementById("followers").value;
+            const likes = document.getElementById("likes").value;
+            const domaine = document.getElementById("domaine").value;
 
-        function sauvegarderStats() {
-            localStorage.setItem("followers", document.getElementById("followers").value);
-            localStorage.setItem("likes", document.getElementById("likes").value);
-            localStorage.setItem("domaine", document.getElementById("domaine").value);
-            alert("Statistiques mises à jour !");
-        }
+            try {
+                const res = await fetch('/api/stats', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ followers, likes, domaine, password: motDePasseSaisi })
+                });
 
-        function afficherListeBoutons() {
-            let boutons = localStorage.getItem("liste_boutons_v2");
-            if (!boutons) {
-                boutons = boutonsParDefaut;
-                localStorage.setItem("liste_boutons_v2", JSON.stringify(boutonsParDefaut));
-            } else {
-                boutons = JSON.parse(boutons);
+                if (res.status === 401) {
+                    alert("Mot de passe incorrect ❌");
+                    document.getElementById("login-screen").style.display = "flex";
+                    document.getElementById("admin-content").style.display = "none";
+                    return;
+                }
+
+                if (!res.ok) throw new Error("Erreur serveur");
+
+                alert("Statistiques mises à jour !");
+            } catch (err) {
+                alert("Erreur lors de l'enregistrement. Vérifiez votre connexion.");
             }
-
-            const wrapper = document.getElementById("liste-wrapper");
-            wrapper.innerHTML = "";
-
-            boutons.forEach((bouton, index) => {
-                const div = document.createElement("div");
-                div.className = "item-bouton";
-                
-                const disableUp = index === 0 ? "disabled" : "";
-                const disableDown = index === boutons.length - 1 ? "disabled" : "";
-
-                div.innerHTML = `
-                    <div class="item-info">
-                        <strong>${bouton.texte}</strong>
-                        <span class="item-url">${bouton.url}</span>
-                    </div>
-                    <div class="actions-btn">
-                        <div class="order-btns">
-                            <button class="btn-action btn-arrow" ${disableUp} onclick="deplacerBouton(${index}, -1)">▲</button>
-                            <button class="btn-action btn-arrow" ${disableDown} onclick="deplacerBouton(${index}, 1)">▼</button>
-                        </div>
-                        <button class="btn-action btn-edit" onclick="chargerPourModifier(${index})">Modifier</button>
-                        <button class="btn-action btn-suppr" onclick="supprimerBouton(${index})">X</button>
-                    </div>
-                `;
-                wrapper.appendChild(div);
-            });
-        }
-
-        function deplacerBouton(index, direction) {
-            let boutons = JSON.parse(localStorage.getItem("liste_boutons_v2")) || [];
-            const cible = index + direction;
-            if (cible < 0 || cible >= boutons.length) return;
-            
-            const temporaire = boutons[index];
-            boutons[index] = boutons[cible];
-            boutons[cible] = temporaire;
-            
-            localStorage.setItem("liste_boutons_v2", JSON.stringify(boutons));
-            afficherListeBoutons();
-        }
-
-        function validerBouton() {
-            const texte = document.getElementById("new-text").value.trim();
-            const url = document.getElementById("new-url").value.trim();
-            const editIndex = parseInt(document.getElementById("edit-index").value);
-
-            if(!texte || !url) {
-                alert("Veuillez remplir le texte et l'URL.");
-                return;
-            }
-
-            let boutons = JSON.parse(localStorage.getItem("liste_boutons_v2")) || [];
-
-            if (editIndex === -1) {
-                boutons.push({ texte: texte, url: url });
-            } else {
-                boutons[editIndex] = { texte: texte, url: url };
-                document.getElementById("edit-index").value = "-1";
-                const btnSubmit = document.getElementById("btn-submit-bouton");
-                btnSubmit.innerText = "+ Ajouter ce bouton";
-                btnSubmit.style.backgroundColor = "#00f2fe";
-                btnSubmit.style.color = "#000";
-            }
-
-            localStorage.setItem("liste_boutons_v2", JSON.stringify(boutons));
-            document.getElementById("new-text").value = "";
-            document.getElementById("new-url").value = "";
-            afficherListeBoutons();
-        }
-
-        function chargerPourModifier(index) {
-            let boutons = JSON.parse(localStorage.getItem("liste_boutons_v2"));
-            const bouton = boutons[index];
-            document.getElementById("new-text").value = bouton.texte;
-            document.getElementById("new-url").value = bouton.url;
-            document.getElementById("edit-index").value = index;
-
-            const btnSubmit = document.getElementById("btn-submit-bouton");
-            btnSubmit.innerText = "💾 Enregistrer la modification";
-            btnSubmit.style.backgroundColor = "#ff9500";
-            btnSubmit.style.color = "#fff";
-        }
-
-        function supprimerBouton(index) {
-            let boutons = JSON.parse(localStorage.getItem("liste_boutons_v2"));
-            boutons.splice(index, 1);
-            localStorage.setItem("liste_boutons_v2", JSON.stringify(boutons));
-            
-            document.getElementById("edit-index").value = "-1";
-            const btnSubmit = document.getElementById("btn-submit-bouton");
-            btnSubmit.innerText = "+ Ajouter ce bouton";
-            btnSubmit.style.backgroundColor = "#00f2fe";
-            btnSubmit.style.color = "#000";
-            document.getElementById("new-text").value = "";
-            document.getElementById("new-url").value = "";
-            afficherListeBoutons();
         }
     </script>
 </body>
