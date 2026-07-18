@@ -5,6 +5,7 @@ const { Pool } = require('pg');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "1234";
+console.log("ADMIN_PASSWORD détecté depuis l'environnement :", !!process.env.ADMIN_PASSWORD);
 
 app.use(express.json());
 app.use(express.static(__dirname));
