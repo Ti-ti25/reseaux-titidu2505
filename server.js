@@ -41,6 +41,16 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Vérifie le mot de passe admin (utilisé par l'écran de connexion)
+app.post('/api/login', (req, res) => {
+    const { password } = req.body;
+    if (password === ADMIN_PASSWORD) {
+        res.json({ ok: true });
+    } else {
+        res.status(401).json({ ok: false });
+    }
+});
+
 // Récupère les stats depuis la base (accessible à tous, en lecture seule)
 app.get('/api/stats', async (req, res) => {
     try {
@@ -55,19 +65,22 @@ app.get('/api/stats', async (req, res) => {
 // Met à jour les stats — protégé par le mot de passe admin
 app.post('/api/stats', async (req, res) => {
     const { followers, likes, domaine, password } = req.body;
+    console.log("POST /api/stats reçu avec :", { followers, likes, domaine });
 
     if (password !== ADMIN_PASSWORD) {
+        console.log("Mot de passe refusé.");
         return res.status(401).json({ error: "Mot de passe incorrect." });
     }
 
     try {
-        await pool.query(
+        const result = await pool.query(
             'UPDATE stats SET followers = $1, likes = $2, domaine = $3 WHERE id = 1',
             [followers, likes, domaine]
         );
+        console.log("Lignes mises à jour :", result.rowCount);
         res.json({ message: "OK" });
     } catch (err) {
-        console.error(err);
+        console.error("Erreur lors de la sauvegarde :", err);
         res.status(500).json({ error: "Impossible de sauvegarder les statistiques." });
     }
 });

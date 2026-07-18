@@ -64,13 +64,33 @@
     <script>
         let motDePasseSaisi = "";
 
-        function verifierMotDePasse() {
-            motDePasseSaisi = document.getElementById("password").value;
-            // On tente juste de charger les stats : si le mot de passe est faux,
-            // ça sera rejeté au moment de l'enregistrement par le serveur.
-            document.getElementById("login-screen").style.display = "none";
-            document.getElementById("admin-content").style.display = "block";
-            initialiserAdmin();
+        async function verifierMotDePasse() {
+            const saisie = document.getElementById("password").value;
+            const btnConnexion = document.querySelector("#login-screen button");
+            btnConnexion.disabled = true;
+            btnConnexion.innerText = "Vérification...";
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: saisie })
+                });
+
+                if (res.ok) {
+                    motDePasseSaisi = saisie;
+                    document.getElementById("login-screen").style.display = "none";
+                    document.getElementById("admin-content").style.display = "block";
+                    initialiserAdmin();
+                } else {
+                    alert("Mot de passe incorrect ❌");
+                }
+            } catch (err) {
+                alert("Erreur réseau, impossible de vérifier le mot de passe.");
+            } finally {
+                btnConnexion.disabled = false;
+                btnConnexion.innerText = "Connexion";
+            }
         }
 
         async function initialiserAdmin() {
